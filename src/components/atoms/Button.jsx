@@ -21,7 +21,7 @@ const Button = ({
         className={
           typeButton === "rectangel"
             ? cn(
-                "cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-z-1 hover:scale-105  rounded-md h-12 px-5 py-3 flex justify-center items-center",
+                "cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-z-1 hover:scale-105 rounded-md h-12 px-5 py-3 flex justify-center items-center",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:hover:scale-0 disabled:hover:translate-z-0 disabled:transition-none",
 
                 {
@@ -30,7 +30,7 @@ const Button = ({
                   "bg-white  text-primary hover:outline-white hover:outline-2":
                     variant === "rectangelWhite",
                 },
-                isFullwidth ? "w-max" : "w-full",
+                isFullwidth ? "w-full" : "w-max",
                 className,
               )
             : cn(
