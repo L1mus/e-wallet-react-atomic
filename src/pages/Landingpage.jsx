@@ -1,9 +1,11 @@
 import Button from "../components/atoms/Button";
 import IconArrow from "../assets/icons/arrow.svg?react";
+import Sidebar from "../components/organism/Sidebar";
 
 const Landingpage = () => {
   return (
     <>
+      <Sidebar />
       <div className="flex flex-col gap-12 justify-around">
         <Button
           isHaveIcon={true}
