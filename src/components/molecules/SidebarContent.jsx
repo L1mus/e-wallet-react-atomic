@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import SidebarNavItem from "./SidebarNavItem";
 import LayoutDashboard from "../../assets/icons/dashboard-two.svg?react";
-import ArrowLeftRight from "../../assets/icons/send.svg?react";
+import ArrowLeftRight from "../../assets/icons/Send.svg?react";
 import History from "../../assets/icons/history.svg?react";
 import CreditCard from "../../assets/icons/Upload.svg?react";
 import UserRound from "../../assets/icons/2 User.svg?react";
