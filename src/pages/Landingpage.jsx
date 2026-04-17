@@ -1,39 +1,28 @@
-import Button from "../components/atoms/Button";
-import IconArrow from "../assets/icons/arrow.svg?react";
-import Sidebar from "../components/organism/Sidebar";
+import bankBri from "../assets/images/bankBri.png";
+import IconTrash from "../assets/icons/Trash.svg?react";
+import InputRadio from "../components/atoms/InputRadio";
+import Table from "../components/organism/Table";
+import DropdownMenu from "../components/molecules/DropdownMenu";
 
 const Landingpage = () => {
   return (
     <>
-      <Sidebar />
-      <div className="flex flex-col gap-12 justify-around">
-        <Button
-          isHaveIcon={true}
-          Icon={IconArrow}
-          variant="rectangelBlue"
-          children="Login"
+      <div className="w-full">
+        <InputRadio
+          nameInput={"bankBri"}
+          valueInput={"bri"}
+          labelName={"Bank Rakyat Indonesia"}
+          logo={bankBri}
         />
-        <div className=" w-156 p-12 bg-primary flex justify-center">
-          <Button
-            isFullwidth={true}
-            variant="rectangelWhite"
-            children={"21412412412441515"}
-          />
-        </div>
-        <Button
-          isDisabled={true}
-          typeButton="cicle"
-          variant="cicleBlue"
-          children={"Login"}
+        <Table
+          imageSrc={bankBri}
+          name={"Ali Mustadji"}
+          phoneNumber={"085156534946"}
+          children={<IconTrash />}
+          classNameIcon={"text-danger text-xl place-items-center mt-2"}
         />
-        <Button
-          isHaveIcon={true}
-          Icon={IconArrow}
-          iconClassName="text-red-900 stroke-current fill-current w-4 h-4"
-          typeButton="cicle"
-          variant="cicleBlue"
-        />
-        <Button typeButton="cicle" variant="cicleWhite" children={"Login"} />
+
+        <DropdownMenu />
       </div>
     </>
   );
