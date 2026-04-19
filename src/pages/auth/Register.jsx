@@ -1,0 +1,158 @@
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, Link } from "react-router";
+import { AuthLayout } from "../../layouts/AuthLayout";
+import { Input } from "../../components/form/Input";
+import { PhoneInput } from "../../components/form/PhoneInput";
+import { Button } from "../../components/ui/Button";
+import OauthButton from "../../components/ui/OauthButton";
+import imgWallet from "../../assets/images/wallet.png";
+import iconPassword from "../../assets/icons/Password.svg";
+import iconMail from "../../assets/icons/mail.svg";
+import iconUser from "../../assets/icons/2 User.svg";
+import iconFacebook from "../../assets/icons/bx_bxl-facebook-circle.svg";
+import iconGoogle from "../../assets/icons/flat-color-icons_google.svg";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
+import { registerActions } from "../../redux/slice/registerSlice";
+
+const schemaValidasiRegister = z.object({
+  name: z.string().trim().min(1, { message: "Fullname is required" }),
+  email: z
+    .string({ message: "Email must be String" })
+    .min(1, { message: "Email is required" })
+    .regex(/\S+@\S+\.\S+/, { message: "Invalid Email" })
+    .email(),
+  phone: z
+    .string()
+    .min(1, { message: " Phone is required" })
+    .regex(/^[0-9]*$/g, { message: "Input must be character Number" })
+    .min(10, { message: " Minimum 10 characters" }),
+  password: z
+    .string()
+    .min(1, { message: " Password is required" })
+    .min(8, { message: "Password minimum 8 characters" }),
+});
+
+export const Register = () => {
+  const navigate = useNavigate();
+  const stateLogin = useSelector((state) => state.loginReducer);
+  const stateRegister = useSelector((state) => state.registerReducer);
+  const dispatch = useDispatch();
+  const action = registerActions;
+  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: zodResolver(schemaValidasiRegister) });
+
+  useEffect(() => {
+    if (stateLogin.isLogin) navigate("/");
+  }, [navigate, stateLogin.isLogin]);
+
+  const onSubmit = (data) => {
+    setErrorMessage("");
+    dispatch(action.registerUser(data));
+    navigate("/login");
+  };
+
+  return (
+    <>
+      {stateRegister.isLoading ? (
+        <div className="grid place-items-center min-h-screen">
+          <OrbitProgress
+            variant="disc"
+            dense
+            color="#2948FF"
+            size="large"
+            text="Loading..."
+            textColor="#2948FF"
+          />
+        </div>
+      ) : (
+        <AuthLayout
+          title="Start Accessing Banking Needs With All Devices and All Platforms With 30.000+ Users"
+          subtitle="Transfering money is easier than ever, you can access Zwallet wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!"
+          imagePath={imgWallet}
+        >
+          <div className="flex flex-col gap-3 mb-4">
+            <OauthButton icon={iconGoogle} text="Sign In With Google" />
+            <OauthButton icon={iconFacebook} text="Sign In With Facebook" />
+          </div>
+
+          <div className="flex items-center mb-4">
+            <div className="flex-1 h-px bg-[#E8E8E8]" />
+            <span className="px-4 text-[#A9A9A9] text-sm font-normal">Or</span>
+            <div className="flex-1 h-px bg-[#E8E8E8]" />
+          </div>
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-3"
+            noValidate
+          >
+            <Input
+              {...register("name", { required: true })}
+              label="Full Name"
+              placeholder="Enter Your Name"
+              icon={iconUser}
+              error={errors.name?.message}
+            />
+
+            <Input
+              label="Email"
+              type="email"
+              placeholder="Enter Your Email"
+              icon={iconMail}
+              {...register("email", {
+                required: true,
+              })}
+              error={errors.email?.message || errorMessage}
+            />
+
+            <PhoneInput
+              label="Phone Number"
+              placeholder="821xxxxxxxx"
+              {...register("phone", {
+                required: true,
+              })}
+              error={errors.phone?.message}
+            />
+
+            <Input
+              label="Password"
+              type="password"
+              placeholder="Create Strong Password"
+              icon={iconPassword}
+              {...register("password", {
+                required: true,
+              })}
+              error={errors.password?.message}
+            />
+
+            <Button
+              type="submit"
+              variant="primary"
+              isFullWidth
+              className="mt-1"
+            >
+              Register
+            </Button>
+          </form>
+
+          <div className="mt-4 text-center text-base">
+            <span className="text-grey font-normal">Have An Account? </span>
+            <Link
+              to="/login"
+              className="text-primary font-medium hover:underline"
+            >
+              Login
+            </Link>
+          </div>
+        </AuthLayout>
+      )}
+    </>
+  );
+};

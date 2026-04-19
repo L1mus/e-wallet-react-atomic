@@ -1,11 +1,23 @@
 const KEYS = {
   session: "ew-session",
-  database: "ew-DB",
+  database: "persist:ew-DB",
 };
 
 export const getData = () => {
   const data = localStorage.getItem(KEYS.database);
-  return data ? JSON.parse(data) : { users: [], reviews: [] };
+  return data ? JSON.parse(data) : null;
+};
+
+export const getDataUserLogin = () => {
+  const dataParse = localStorage.getItem(KEYS.database);
+  const data = JSON.parse(dataParse);
+  return data ? JSON.parse(data.loginReducer)?.loginUser : [];
+};
+
+export const getDataUserRegister = () => {
+  const dataParse = localStorage.getItem(KEYS.database);
+  const data = JSON.parse(dataParse);
+  return data ? JSON.parse(data.registerReducer) : [];
 };
 
 export const saveData = (data) => {
@@ -13,8 +25,8 @@ export const saveData = (data) => {
 };
 
 export const isEmailExists = (email) => {
-  const data = getData();
-  return data.users.some((user) => user.email === email);
+  const data = getDataUserRegister();
+  return data.registerUser.some((user) => user.email === email);
 };
 
 export const getSession = () => {
