@@ -12,12 +12,12 @@ const CardBalance = ({
 }) => {
   return (
     <>
-      <div className="border-2 rounded-lg border-grey-light w-full p-2 flex flex-col gap-2 items-center sm:border sm:items-start">
+      <div className="border-2 rounded-lg border-grey-light w-full lg:h-37 p-2 flex flex-col gap-2 items-center sm:border sm:items-start justify-center bg-white">
         <div className="flex gap-2 items-center">
           <div className="text-primary ">{children}</div>
           <p className="text-xs sm:text-base">{title}</p>
         </div>
-        <p className="text-xs sm:text-2xl font-medium text-center text ">
+        <p className="text-xs sm:text-sm lg:text-base font-semibold text-center text ">
           Rp.{balance}K
         </p>
         <div className="flex gap-0.5 items-center sm:gap-1">
