@@ -1,23 +1,35 @@
-import React from "react";
-
-const InputRadio = ({ nameInput, valueInput, labelName, logo }) => {
+const InputRadio = ({
+  nameInput,
+  valueInput,
+  labelName,
+  logo,
+  checked,
+  onChange,
+}) => {
   return (
-    <>
-      <div className="flex items-center gap-3 bg-grey-light p-3 rounded-lg cursor-pointer">
-        <input
-          name={nameInput}
-          id={nameInput}
-          type="radio"
-          value={valueInput}
+    <label className="flex items-center gap-4 bg-gray-50 hover:bg-gray-100 border border-transparent hover:border-gray-200 transition-colors p-4 rounded-xl cursor-pointer">
+      <input
+        name={nameInput}
+        id={valueInput}
+        type="radio"
+        value={valueInput}
+        checked={checked}
+        onChange={onChange}
+        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+      />
+
+      <div className="w-16 flex items-center justify-center">
+        <img
+          src={logo}
+          alt={`logo ${labelName}`}
+          className="max-h-6 object-contain"
         />
-        <div>
-          <img src={logo} alt={`logo ${nameInput}`} />
-        </div>
-        <label className="cursor-pointer" htmlFor={nameInput}>
-          {labelName}
-        </label>
       </div>
-    </>
+
+      <span className="text-gray-600 font-medium cursor-pointer">
+        {labelName}
+      </span>
+    </label>
   );
 };
 
