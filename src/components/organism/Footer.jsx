@@ -1,11 +1,11 @@
 // import { Phone, Mail, Twitter, Facebook, Instagram, Github } from "lucide-react";
-import iconMoneyWallet from "../assets/icons/Money-Wallet.svg";
-import iconPhone from "../assets/icons/Phone.svg";
-import iconMail from "../assets/icons/mail.svg";
-import iconGithub from "../assets/icons/u_github.svg";
-import iconInstagram from "../assets/icons/u_instagram.svg";
-import iconTwitter from "../assets/icons/u_twitter-alt.svg";
-import iconFacebook from "../assets/icons/facebook.svg";
+import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
+import iconPhone from "../../assets/icons/Phone.svg";
+import iconMail from "../../assets/icons/mail.svg";
+import iconGithub from "../../assets/icons/u_github.svg";
+import iconInstagram from "../../assets/icons/u_instagram.svg";
+import iconTwitter from "../../assets/icons/u_twitter-alt.svg";
+import iconFacebook from "../../assets/icons/facebook.svg";
 
 export const Footer = () => {
   return (
