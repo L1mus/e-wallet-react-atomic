@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { cn } from "../../utils/cn";
+import cn from "../../utils/cn";
 
 /**
  * PinInput Components
@@ -9,7 +9,7 @@ import { cn } from "../../utils/cn";
  * @param {String} props.text
  * @returns {JSX.element}
  */
-export const PinInput = ({ length = 6, onChange, error, className }) => {
+const PinInput = ({ length = 6, onChange, error, className }) => {
   const [pin, setPin] = useState(new Array(length).fill(""));
   const inputRefs = useRef([]);
 
@@ -90,3 +90,5 @@ export const PinInput = ({ length = 6, onChange, error, className }) => {
     </div>
   );
 };
+
+export default PinInput;
