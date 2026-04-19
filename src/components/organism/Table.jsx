@@ -1,17 +1,12 @@
 import React from "react";
-import TableContent from "../molecules/TableContent";
 
-const Table = ({ imageSrc, name, phoneNumber, children, classNameIcon }) => {
+const Table = ({ children }) => {
   return (
-    <table className="table-auto w-full odd:bg-grey-light">
-      <TableContent
-        imageSrc={imageSrc}
-        username={name}
-        phoneNumber={phoneNumber}
-        children={children}
-        classNameIcon={classNameIcon}
-      />
-    </table>
+    <div className="w-full overflow-x-auto custom-scrollbar">
+      <table className="w-full border-collapse min-w-0 md:min-w-175 table-auto">
+        <tbody>{children}</tbody>
+      </table>
+    </div>
   );
 };
 
