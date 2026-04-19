@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router";
 
-import LandingPage from "./pages/LandingPage";
+import LandingPage from "./pages/Landingpage";
 // import { Login } from "./pages/auth/Login";
 // import { Register } from "./pages/auth/Register";
 // import { ForgotPassword } from "./pages/auth/ForgotPassword";
@@ -11,7 +11,7 @@ import DashboardLayout from "./components/templates/DashboardLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import History from "./pages/dashboard/History";
 import Transfer from "./pages/dashboard/Transfer";
-import TransferDetail from "./pages/dashboard/TransferDeatail";
+import TransferDetail from "./pages/dashboard/TransferDetail";
 import TopUp from "./pages/dashboard/TopUp";
 import Profile from "./pages/dashboard/Profile";
 import ChangePassword from "./pages/dashboard/ChangePassword";
