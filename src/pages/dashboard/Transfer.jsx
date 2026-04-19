@@ -1,10 +1,11 @@
 import { useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router";
-import { Search, Star, Send } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import Table from "../../components/organism/Table";
 import TableContent from "../../components/molecules/TableContent";
 import Avatar from "../../components/atoms/Avatar";
 import Stepper from "../../components/molecules/Stepper";
+import Send from "../../assets/icons/Send.svg?react";
 
 const Transfer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -51,7 +52,7 @@ const Transfer = () => {
     <div className="w-full pb-10">
       <div className="mb-6">
         <div className="hidden md:flex items-center gap-2 mb-6 text-primary">
-          <Send size={24} />
+          <Send className={"text-2xl font-bold"} />
           <h1 className="text-xl font-bold text-black">Transfer Money</h1>
         </div>
         <div>

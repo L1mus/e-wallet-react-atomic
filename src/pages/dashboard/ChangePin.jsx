@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { User } from "lucide-react";
+import { useState } from "react";
+import User from "../../assets/icons/2 User.svg?react";
 
 import Button from "../../components/atoms/Button";
 import PinInput from "../../components/atoms/PinInput";
@@ -15,7 +15,7 @@ const ChangePin = () => {
   return (
     <div className="w-full pb-10">
       <div className="flex items-center gap-2 mb-6 text-primary px-4 md:px-0">
-        <User size={24} />
+        <User className={"text-2xl font-bold"} />
         <h1 className="text-xl font-bold text-black font-lexend">Profile</h1>
       </div>
 
