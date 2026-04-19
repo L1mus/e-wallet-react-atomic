@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Header } from "../layouts/Header";
-import { Footer } from "../layouts/Footer";
-import { Button } from "../components/ui/Button";
-import { AboutCard } from "../components/ui/AboutCard";
-import { ReviewCard } from "../components/ui/ReviewCard";
+import Header from "../components/organism/Header";
+import { Footer } from "../components/organism/Footer";
+import Button from "../components/atoms/Button";
+import { AboutCard } from "../components/organism/AboutCard";
+import { ReviewCard } from "../components/organism/ReviewCard";
 import logoHero from "../assets/images/online-payment-security-concept-3d-phone-bill.png";
 import logoPlayStore from "../assets/icons/appstore.svg";
 import logoGplay from "../assets/icons/gplay.svg";
@@ -22,7 +22,7 @@ import logoMobile from "../assets/images/Mobile - Dashboard V2.png";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 // import { getReviews } from "../utils/storage";
 
-export const LandingPage = () => {
+const LandingPage = () => {
   const reviews = [
     {
       id: 1,
@@ -293,3 +293,5 @@ export const LandingPage = () => {
     </div>
   );
 };
+
+export default LandingPage;
