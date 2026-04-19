@@ -28,9 +28,8 @@ const SidebarNavItem = ({
         {({ isActive }) => (
           <>
             <Icon
-              size={18}
               className={cn(
-                "shrink-0 transition-colors duration-200",
+                "shrink-0 transition-colors duration-200 w-6 h-6",
                 isActive ? "text-white" : "text-grey group-hover:text-primary",
               )}
             />

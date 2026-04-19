@@ -1,54 +1,39 @@
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 import cn from "../../utils/cn";
 import SidebarContent from "../molecules/SidebarContent";
 
-const Sidebar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const openMenu = () => {
-    setIsMenuOpen(true);
-  };
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
+const Sidebar = ({ isOpen, onClose }) => {
   return (
     <>
-      <button
-        onClick={openMenu}
-        className="fixed top-21 left-4 z-40 flex items-center justify-center w-10 h-10 bg-white rounded-md shadow-md text-black-light md:hidden"
-      >
-        <Menu size={20} />
-      </button>
-
-      {isMenuOpen && (
+      {isOpen && (
         <div
-          onClick={closeMenu}
-          className="fixed inset-x-0 top-19 bottom-0 z-40 bg-black/40 md:hidden"
+          onClick={onClose}
+          className="fixed inset-0 z-40 bg-black/50 md:hidden transition-opacity"
         />
       )}
 
       <aside
         className={cn(
-          "flex flex-col bg-white border-r border-grey-light",
-          "md:flex md:w-1/6 md:min-w-48 md:sticky md:top-19 md:h-[calc(100vh-76px)]",
-          "fixed top-19 left-0 z-50 h-[calc(100vh-76px)] w-3/4 max-w-xs",
-          "transition-transform duration-300",
-          isMenuOpen ? "translate-x-0" : "-translate-x-full",
-          "md:relative md:top-0 md:translate-x-0",
+          "flex flex-col bg-white border-l md:border-r md:border-l-0 border-grey-light",
+          "md:flex md:w-1/6 md:min-w-48 md:sticky md:top-0 md:h-screen md:translate-x-0",
+          "fixed top-0 right-0 z-50 h-full w-3/4 max-w-xs",
+          "transition-transform duration-300 ease-in-out",
+          isOpen
+            ? "translate-x-0 shadow-2xl"
+            : "translate-x-full md:translate-x-0",
         )}
       >
-        <div className="flex justify-end px-4 pt-4 md:hidden">
+        <div className="flex justify-between items-center px-6 pt-6 md:hidden">
+          <span className="font-bold text-lg text-primary">Menu</span>
           <button
-            onClick={closeMenu}
-            className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-grey-light text-black-light"
+            onClick={onClose}
+            className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-grey-light text-black-light cursor-pointer"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 
-        <SidebarContent onClose={closeMenu} />
+        <SidebarContent onClose={onClose} />
       </aside>
     </>
   );
