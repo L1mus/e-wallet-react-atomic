@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { cn } from "../../utils/cn";
+import cn from "../../utils/cn";
 
 /**
  * Input Component
@@ -79,3 +79,5 @@ export const Input = ({
     </div>
   );
 };
+
+export default Input;
