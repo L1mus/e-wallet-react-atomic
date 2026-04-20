@@ -6,7 +6,7 @@ const Button = ({
   isDisabled = false,
   typeButton = "rectangel",
   isHaveIcon = false,
-  isFullwidth = false,
+  isFullWidth = false,
   // eslint-disable-next-line no-unused-vars
   Icon,
   iconClassName,
@@ -27,19 +27,20 @@ const Button = ({
                 {
                   "bg-primary text-white hover:opacity-80 ":
                     variant === "rectangelBlue",
-                  "bg-white  text-primary hover:outline-white hover:outline-2":
+                  "bg-white  text-primary hover:outline-primary hover:outline-2":
                     variant === "rectangelWhite",
                 },
-                isFullwidth ? "w-full" : "w-max",
+                isFullWidth ? "w-full" : "w-max",
                 className,
               )
             : cn(
                 "cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-z-1 hover:scale-110 rounded-full w-12 h-12 p-4 flex justify-center items-center",
-                "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:hover:scale-100 disabled:hover:translate-y-0 disabled:transition-none",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:transition-none",
                 {
                   "bg-primary text-white": variant === "cicleBlue",
                   "bg-white text-primary": variant === "cicleWhite",
                 },
+                className,
               )
         }
         {...props}

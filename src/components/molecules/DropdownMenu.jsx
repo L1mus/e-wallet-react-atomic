@@ -15,7 +15,7 @@ const DropdownMenu = () => {
               "text-black hover:text-white font-medium text-sm hover:outline-primary hover:bg-primary hover:scale-100 transition-none justify-start"
             }
             children="Profile"
-            isFullwidth={true}
+            isFullWidth={true}
             variant="rectangelWhite"
           />
           <Button
@@ -25,7 +25,7 @@ const DropdownMenu = () => {
               "text-red-500 hover:text-danger hover:text-lg bg-white font-medium text-sm  hover:scale-105 hover:bg-primary transition-none justify-start"
             }
             children="Logout"
-            isFullwidth={true}
+            isFullWidth={true}
           />
         </div>
       </div>

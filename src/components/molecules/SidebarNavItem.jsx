@@ -49,7 +49,7 @@ const SidebarNavItem = ({
         isDestructive ? "text-danger" : "text-grey",
       )}
       variant="rectangelWhite"
-      isFullwidth={true}
+      isFullWidth={true}
       onClick={onClick}
       className={cn(
         "justify-start gap-3 px-6 py-3 h-auto rounded-md outline-none",

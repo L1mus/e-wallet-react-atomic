@@ -62,12 +62,12 @@ const ModalPin = ({ isOpen, onClose, onConfirm, transferToName }) => {
           )}
         </div>
 
-        <Button typeButton="submit" children="Submit" isFullwidth={true} />
+        <Button typeButton="submit" children="Submit" isFullWidth={true} />
 
         <div className="mt-5 text-center">
           <span className="text-sm text-gray-500">
             Forgot Your Pin?
-            <Button typeButton="button" children="Submit" isFullwidth={true} />
+            <Button typeButton="button" children="Submit" isFullWidth={true} />
           </span>
         </div>
       </form>

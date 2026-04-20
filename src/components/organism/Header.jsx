@@ -129,7 +129,7 @@ const Header = ({
             {!isDashboard && isMobileMenuOpen && (
               <div className="absolute top-17.5 right-5 z-50 border-2 shadow-lg shadow-black-light border-black w-56 p-3 rounded-xl bg-white flex flex-col gap-2 md:hidden">
                 <Link to="/dashboard" onClick={toggleMobileMenu}>
-                  <Button variant="rectangelBlue" isFullwidth={true}>
+                  <Button variant="rectangelBlue" isFullWidth={true}>
                     Ke Dashboard
                   </Button>
                 </Link>
@@ -139,7 +139,7 @@ const Header = ({
         ) : (
           <>
             <div className="hidden md:flex items-center gap-4">
-              <Link to="/login">
+              <Link to="/auth/login">
                 <Button
                   variant="rectangelWhite"
                   className="bg-transparent text-white border border-white hover:bg-white hover:text-primary h-10 px-6"
@@ -167,12 +167,12 @@ const Header = ({
 
               {isMobileMenuOpen && (
                 <div className="absolute top-12.5 right-0 border-2 shadow-lg shadow-black-light border-black w-56 p-3 rounded-xl bg-white z-50 flex flex-col gap-1">
-                  <Link to="/login" onClick={toggleMobileMenu}>
+                  <Link to="/auth/login" onClick={toggleMobileMenu}>
                     <Button
                       isHaveIcon={true}
                       Icon={LogIn}
                       className="text-black hover:text-white font-medium text-sm hover:outline-primary hover:bg-primary hover:scale-100 transition-none justify-start"
-                      isFullwidth={true}
+                      isFullWidth={true}
                       variant="rectangelWhite"
                     >
                       Sign In
@@ -183,7 +183,7 @@ const Header = ({
                       isHaveIcon={true}
                       Icon={UserPlus}
                       className="text-black hover:text-white font-medium text-sm hover:outline-primary hover:bg-primary hover:scale-100 transition-none justify-start mt-1"
-                      isFullwidth={true}
+                      isFullWidth={true}
                       variant="rectangelWhite"
                     >
                       Sign Up
