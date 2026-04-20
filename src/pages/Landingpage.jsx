@@ -20,7 +20,6 @@ import logoMoney from "../assets/icons/u_money-bill.svg";
 import logoUserCheck from "../assets/icons/u_user-check.svg";
 import logoMobile from "../assets/images/Mobile - Dashboard V2.png";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-// import { getReviews } from "../utils/storage";
 
 const LandingPage = () => {
   const reviews = [
@@ -73,8 +72,8 @@ const LandingPage = () => {
           </p>
 
           <Button
-            variant="primary"
-            className="mb-12 px-10 h-14.5 rounded-[10px] text-base"
+            variant="rectangelWhite"
+            className="mb-12 px-10 h-14.5 text-base border border-primary"
           >
             Get Started
           </Button>
@@ -229,9 +228,12 @@ const LandingPage = () => {
               ))}
             </div>
 
-            <button className="bg-white text-primary px-12 h-14 rounded-xl font-bold text-base shadow-xl hover:bg-gray-100 transition-all active:scale-95">
+            <Button
+              variant="rectangelWhite"
+              className={"font-semibold w-46 hover:opacity-85"}
+            >
               Get Started
-            </button>
+            </Button>
           </div>
         </div>
       </section>
@@ -248,12 +250,18 @@ const LandingPage = () => {
         </div>
 
         <div className="relative w-full max-w-360 mx-auto px-6 lg:px-30">
-          <button
+          <Button
             onClick={prevReview}
-            className="hidden lg:flex absolute left-4 xl:left-10 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full border border-gray-200 items-center justify-center bg-white hover:bg-gray-50 shadow-sm z-20 transition-transform active:scale-90"
-          >
-            <ChevronLeft size={24} className="text-black" />
-          </button>
+            typeButton="cicle"
+            variant="cicleBlue"
+            className={
+              "lg:flex items-center justify-center absolute left-4 xl:left-10 top-1/2 -translate-y-1/2"
+            }
+            isHaveIcon={true}
+            Icon={ChevronLeft}
+            iconClassName={"disable:text-grey-light"}
+            isDisabled={true}
+          ></Button>
 
           <div className="flex flex-row lg:grid lg:grid-cols-3 gap-6 lg:gap-11 w-full overflow-x-auto lg:overflow-x-visible no-scrollbar pb-4">
             {reviews.map((review) => (
@@ -267,12 +275,16 @@ const LandingPage = () => {
             ))}
           </div>
 
-          <button
+          <Button
             onClick={nextReview}
-            className="hidden lg:flex absolute right-4 xl:right-10 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-primary items-center justify-center shadow-lg hover:opacity-90 z-20 transition-transform active:scale-90"
-          >
-            <ChevronRight size={24} className="text-white" />
-          </button>
+            typeButton="cicle"
+            className={
+              "lg:flex items-center justify-center absolute right-4 xl:right-10 top-1/2 -translate-y-1/2"
+            }
+            variant="cicleBlue"
+            isHaveIcon={true}
+            Icon={ChevronRight}
+          ></Button>
         </div>
 
         <div className="flex items-center gap-3 mt-12 lg:mt-16">
