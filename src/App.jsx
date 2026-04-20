@@ -1,11 +1,11 @@
 import { Routes, Route, Navigate } from "react-router";
 
 import LandingPage from "./pages/Landingpage";
-// import { Login } from "./pages/auth/Login";
-// import { Register } from "./pages/auth/Register";
-// import { ForgotPassword } from "./pages/auth/ForgotPassword";
-// import { EnterPin } from "./pages/auth/EnterPin";
-// import { CreatePin } from "./pages/auth/CreatePin";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import EnterPin from "./pages/auth/EnterPin";
+import CreatePin from "./pages/auth/CreatePin";
 
 import DashboardLayout from "./components/templates/DashboardLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -21,11 +21,13 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<LandingPage />} />
-      {/* <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/enter-pin" element={<EnterPin />} />
-        <Route path="/create-pin" element={<CreatePin />} /> */}
+      <Route path="auth">
+        <Route path="login" element={<Login />} />
+        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="enter-pin" element={<EnterPin />} />
+        <Route path="create-pin" element={<CreatePin />} />
+      </Route>
+      <Route path="/register" element={<Register />} />
 
       <Route path="/dashboard" element={<DashboardLayout />}>
         <Route index element={<Dashboard />} />

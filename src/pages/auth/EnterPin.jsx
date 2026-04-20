@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { PinInput } from "../../components/form/PinInput";
-import { Button } from "../../components/ui/Button";
+import PinInput from "../../components/atoms/PinInput";
+import Button from "../../components/atoms/Button";
 import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-export const EnterPin = () => {
+const EnterPin = () => {
   const navigate = useNavigate();
   const [pinValue, setPinValue] = useState("");
   const [error, setError] = useState("");
@@ -67,11 +67,11 @@ export const EnterPin = () => {
         <div className="w-full flex flex-col gap-8 mt-2 items-center">
           <PinInput length={6} onChange={setPinValue} error={error} />
 
-          <Button onClick={handleVerify} variant="primary" isFullWidth>
+          <Button onClick={handleVerify} isFullWidth={true}>
             Confirm PIN
           </Button>
 
-          <button className="text-sm text-primary font-semibold hover:underline text-center">
+          <button className="text-sm text-primary font-semibold hover:underline text-center cursor-pointer">
             Forgot PIN?
           </button>
         </div>
@@ -79,3 +79,5 @@ export const EnterPin = () => {
     </div>
   );
 };
+
+export default EnterPin;

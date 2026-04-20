@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router";
-import { AuthLayout } from "../../layouts/AuthLayout";
-import { Input } from "../../components/form/Input";
-import { PhoneInput } from "../../components/form/PhoneInput";
-import { Button } from "../../components/ui/Button";
-import OauthButton from "../../components/ui/OauthButton";
+import { AuthLayout } from "../../components/templates/AuthLayout";
+import Input from "../../components/atoms/Input";
+import Button from "../../components/atoms/Button";
+import OauthButton from "../../components/atoms/OauthButton";
 import imgWallet from "../../assets/images/wallet.png";
 import iconPassword from "../../assets/icons/Password.svg";
 import iconMail from "../../assets/icons/mail.svg";
@@ -17,25 +16,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { registerActions } from "../../redux/slice/registerSlice";
 
-const schemaValidasiRegister = z.object({
-  name: z.string().trim().min(1, { message: "Fullname is required" }),
-  email: z
-    .string({ message: "Email must be String" })
-    .min(1, { message: "Email is required" })
-    .regex(/\S+@\S+\.\S+/, { message: "Invalid Email" })
-    .email(),
-  phone: z
-    .string()
-    .min(1, { message: " Phone is required" })
-    .regex(/^[0-9]*$/g, { message: "Input must be character Number" })
-    .min(10, { message: " Minimum 10 characters" }),
-  password: z
-    .string()
-    .min(1, { message: " Password is required" })
-    .min(8, { message: "Password minimum 8 characters" }),
-});
+const schemaValidasiRegister = z
+  .object({
+    name: z.string().trim().min(1, { message: "Fullname is required" }),
+    email: z
+      .string({ message: "Email must be String" })
+      .min(1, { message: "Email is required" })
+      .regex(/\S+@\S+\.\S+/, { message: "Invalid Email" })
+      .email(),
+    phone: z
+      .string()
+      .min(1, { message: " Phone is required" })
+      .regex(/^[0-9]*$/g, { message: "Input must be character Number" })
+      .min(10, { message: " Minimum 10 characters" }),
+    password: z
+      .string()
+      .min(1, { message: " Password is required" })
+      .min(8, { message: "Password minimum 8 characters" }),
+    confirmpassword: z
+      .string()
+      .min(1, { message: " Confirm Password is required" }),
+  })
+  .refine((data) => data.password === data.confirmpassword, {
+    message: "Password do not match",
+    path: ["confirmpassword"],
+  });
 
-export const Register = () => {
+const Register = () => {
   const navigate = useNavigate();
   const stateLogin = useSelector((state) => state.loginReducer);
   const stateRegister = useSelector((state) => state.registerReducer);
@@ -112,15 +119,6 @@ export const Register = () => {
               error={errors.email?.message || errorMessage}
             />
 
-            <PhoneInput
-              label="Phone Number"
-              placeholder="821xxxxxxxx"
-              {...register("phone", {
-                required: true,
-              })}
-              error={errors.phone?.message}
-            />
-
             <Input
               label="Password"
               type="password"
@@ -132,12 +130,18 @@ export const Register = () => {
               error={errors.password?.message}
             />
 
-            <Button
-              type="submit"
-              variant="primary"
-              isFullWidth
-              className="mt-1"
-            >
+            <Input
+              label="confirmPassword"
+              type="password"
+              placeholder="Confirm Password"
+              icon={iconPassword}
+              {...register("confirmpassword", {
+                required: true,
+              })}
+              error={errors.password?.message}
+            />
+
+            <Button type="submit" isFullWidth={true} className="mt-1">
               Register
             </Button>
           </form>
@@ -145,7 +149,7 @@ export const Register = () => {
           <div className="mt-4 text-center text-base">
             <span className="text-grey font-normal">Have An Account? </span>
             <Link
-              to="/login"
+              to="/auth/login"
               className="text-primary font-medium hover:underline"
             >
               Login
@@ -156,3 +160,5 @@ export const Register = () => {
     </>
   );
 };
+
+export default Register;

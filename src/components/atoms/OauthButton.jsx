@@ -1,4 +1,4 @@
-import { cn } from "../../utils/cn";
+import cn from "../../utils/cn";
 
 /**
  * OauthButton
@@ -10,17 +10,11 @@ import { cn } from "../../utils/cn";
  * @returns {JSX.element}
  */
 
-const OauthButton = ({
-  icon,
-  text,
-  isLoading = false,
-  className,
-  ...props
-}) => {
+const OauthButton = ({ icon, text, isLoad = false, className, ...props }) => {
   return (
     <button
       type="button"
-      disabled={isLoading || props.disabled}
+      disabled={isLoad || props.disabled}
       className={cn(
         "w-full h-13 flex items-center justify-center gap-3 border border-[#E8E8E8] rounded-full bg-white transition-colors duration-200",
         "hover:bg-gray-50 active:bg-gray-100 outline-none cursor-pointer",

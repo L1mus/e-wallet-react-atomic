@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, Link } from "react-router";
-import { AuthLayout } from "../../layouts/AuthLayout";
-import { Input } from "../../components/form/Input";
-import { Button } from "../../components/ui/Button";
-import OauthButton from "../../components/ui/OauthButton";
+import { AuthLayout } from "../../components/templates/AuthLayout";
+import Input from "../../components/atoms/Input";
+import Button from "../../components/atoms/Button";
+import OauthButton from "../../components/atoms/OauthButton";
 import iconPassword from "../../assets/icons/Password.svg";
 import iconMail from "../../assets/icons/mail.svg";
 import iconFacebook from "../../assets/icons/bx_bxl-facebook-circle.svg";
@@ -15,7 +15,7 @@ import { loginActions } from "../../redux/slice/loginSlice";
 import { toast } from "react-toastify";
 import { OrbitProgress } from "react-loading-indicators";
 
-export const Login = () => {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const action = loginActions;
@@ -99,7 +99,7 @@ export const Login = () => {
               />
               <div className="flex justify-end">
                 <Link
-                  to="/forgot-password"
+                  to="/auth/forgot-password"
                   className="text-sm text-primary font-medium hover:underline"
                 >
                   Forgot Password?
@@ -113,13 +113,7 @@ export const Login = () => {
               </span>
             )}
 
-            <Button
-              isLoading={stateLogin.isLoading}
-              type="submit"
-              variant="primary"
-              isFullWidth
-              className="mt-2"
-            >
+            <Button type="submit" isFullWidth={true}>
               Login
             </Button>
           </form>
@@ -138,3 +132,5 @@ export const Login = () => {
     </>
   );
 };
+
+export default Login;

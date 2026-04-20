@@ -1,4 +1,4 @@
-import iconMoneyWallet from "../assets/icons/Money-Wallet.svg";
+import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 
 /**
  * AuthLayout Component

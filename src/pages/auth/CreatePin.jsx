@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate, Navigate } from "react-router";
-import { AuthLayout } from "../../layouts/AuthLayout";
-import { PinInput } from "../../components/form/PinInput";
-import { Button } from "../../components/ui/Button";
+import { AuthLayout } from "../../components/templates/AuthLayout";
+import PinInput from "../../components/atoms/PinInput";
+import Button from "../../components/atoms/Button";
 import { getData, saveData } from "../../utils/storage";
 import imgBill from "../../assets/images/wallet.png";
 import { toast } from "react-toastify";
 
-export const CreatePin = () => {
+const CreatePin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userData = location.state?.userData;
@@ -81,3 +81,5 @@ export const CreatePin = () => {
     </AuthLayout>
   );
 };
+
+export default CreatePin;

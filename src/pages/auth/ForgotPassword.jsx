@@ -3,8 +3,8 @@ import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { Input } from "../../components/form/Input";
-import { Button } from "../../components/ui/Button";
+import Input from "../../components/atoms/Input";
+import Button from "../../components/atoms/Button";
 import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 import iconMail from "../../assets/icons/mail.svg";
 import { toast } from "react-toastify";
@@ -18,7 +18,7 @@ const schemaEmailForForgotPassword = z.object({
     .trim(),
 });
 
-export const ForgotPassword = () => {
+const ForgotPassword = () => {
   const stateLogin = useSelector((state) => state.loginReducer);
   const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
@@ -78,14 +78,14 @@ export const ForgotPassword = () => {
             <p className="text-danger">{errors.email.message}</p>
           )}
 
-          <Button type="submit" variant="primary" isFullWidth className="mt-2">
+          <Button type="submit" isFullWidth={true} className="mt-2">
             {isSent ? "Resend Link" : "Submit"}
           </Button>
         </form>
 
         <div className="mt-8 text-center">
           <Link
-            to="/login"
+            to="/auth/login"
             className="text-base text-grey font-medium hover:text-primary transition-colors"
           >
             Back to Login
@@ -95,3 +95,5 @@ export const ForgotPassword = () => {
     </div>
   );
 };
+
+export default ForgotPassword;
