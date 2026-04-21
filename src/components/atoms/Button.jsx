@@ -4,6 +4,7 @@ import cn from "../../utils/cn.js";
 const Button = ({
   children = "",
   isDisabled = false,
+  isLoading = false,
   typeButton = "rectangel",
   isHaveIcon = false,
   isFullWidth = false,
@@ -17,7 +18,7 @@ const Button = ({
   return (
     <>
       <button
-        disabled={isDisabled}
+        disabled={isDisabled || isLoading}
         className={
           typeButton === "rectangel"
             ? cn(
