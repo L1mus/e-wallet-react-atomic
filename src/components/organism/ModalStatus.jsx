@@ -8,7 +8,7 @@ const ModalStatus = ({
   primaryAction,
   secondaryAction,
 }) => {
-  const isSuccess = status === "success";
+  const isSuccess = status === "failed";
 
   const content = {
     success: {
@@ -16,14 +16,14 @@ const ModalStatus = ({
       titleHighlight: "Success",
       titleColor: "text-success",
       message: "Thank you for using this application for your financial",
-      imagePlaceholder: "/public/Contact us-pana 1.png",
+      imagePlaceholder: "/Contact us-pana 1.png",
     },
     failed: {
       titlePrefix: "Oops Transfer ",
       titleHighlight: "Failed",
       titleColor: "text-danger",
       message: "Sorry Theres is an issue for your transfer, try again later !",
-      imagePlaceholder: "/public/Oh no-cuate 1.png",
+      imagePlaceholder: "/Oh no-cuate 1.png",
     },
   };
 

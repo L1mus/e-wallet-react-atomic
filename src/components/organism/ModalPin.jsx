@@ -37,7 +37,7 @@ const ModalPin = ({ isOpen, onClose, onConfirm, transferToName }) => {
         )}
 
         <div className="text-left mb-8">
-          <h3 className="text-3xl font-bold text-black mb-2">
+          <h3 className="text-3xl font-medium text-black mb-2">
             Enter Your Pin 👋
           </h3>
           <p className="text-grey text-sm">Enter Your Pin For Transaction</p>
@@ -62,12 +62,16 @@ const ModalPin = ({ isOpen, onClose, onConfirm, transferToName }) => {
           )}
         </div>
 
-        <Button typeButton="submit" children="Submit" isFullWidth={true} />
+        <Button type="submit" children="Submit" isFullWidth={true} />
 
         <div className="mt-5 text-center">
           <span className="text-sm text-gray-500">
-            Forgot Your Pin?
-            <Button typeButton="button" children="Submit" isFullWidth={true} />
+            Forgot Your Pin?{" "}
+            <span>
+              <button className="text-primary cursor-pointer hover:underline ">
+                Reset
+              </button>
+            </span>
           </span>
         </div>
       </form>
