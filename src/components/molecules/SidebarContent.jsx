@@ -9,10 +9,10 @@ import LogOut from "../../assets/icons/Log Out.svg?react";
 
 const menuItems = [
   { path: "/dashboard", label: "Dashboard", Icon: LayoutDashboard },
-  { path: "/dashboard/transfer", label: "Transfer", Icon: ArrowLeftRight },
-  { path: "/dashboard/history", label: "History", Icon: History },
-  { path: "/dashboard/topup", label: "Top Up", Icon: CreditCard },
-  { path: "/dashboard/profile", label: "Profile", Icon: UserRound },
+  { path: "/transfer", label: "Transfer", Icon: ArrowLeftRight },
+  { path: "/history", label: "History", Icon: History },
+  { path: "/topup", label: "Top Up", Icon: CreditCard },
+  { path: "/profile", label: "Profile", Icon: UserRound },
 ];
 
 const SidebarContent = ({ onClose }) => {

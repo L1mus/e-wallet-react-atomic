@@ -111,7 +111,7 @@ const Profile = () => {
             <button
               type="button"
               className="text-primary text-sm font-medium hover:underline cursor-pointer"
-              onClick={() => navigate("/dashboard/profile/change-password")}
+              onClick={() => navigate("/profile/change-password")}
             >
               Change Password
             </button>
@@ -124,7 +124,7 @@ const Profile = () => {
             <button
               type="button"
               className="text-primary text-sm font-medium hover:underline cursor-pointer"
-              onClick={() => navigate("/dashboard/profile/change-pin")}
+              onClick={() => navigate("/profile/change-pin")}
             >
               Change Pin
             </button>

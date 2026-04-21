@@ -38,7 +38,7 @@ const TransferDetail = () => {
 
   const handleTransferAgain = () => {
     setStatusModal({ isOpen: false, status: null });
-    navigate("/dashboard/transfer");
+    navigate("/transfer");
   };
 
   return (

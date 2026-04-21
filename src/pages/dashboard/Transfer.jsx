@@ -45,7 +45,7 @@ const Transfer = () => {
   }, [searchQuery]);
 
   const handleUserSelect = (user) => {
-    navigate(`/dashboard/transfer/${user.id}`, { state: { user } });
+    navigate(`/transfer/${user.id}`, { state: { user } });
   };
 
   return (

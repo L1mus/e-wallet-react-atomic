@@ -13,7 +13,6 @@ const SidebarNavItem = ({
     return (
       <NavLink
         to={path}
-        end
         onClick={onClick}
         className={({ isActive }) =>
           cn(
