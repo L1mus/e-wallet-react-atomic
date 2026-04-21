@@ -78,7 +78,7 @@ const TopUp = () => {
                 value={nominal}
                 onChange={(e) => setNominal(e.target.value)}
                 placeholder="Enter Nominal Transfer"
-                className="w-full border border-grey-light rounded-xl pl-12 pr-4 py-3.5 outline-none text-gray-700 font-medium focus:border-primary transition-colors shadow-sm"
+                className="w-full border border-grey-light rounded-xl pl-12 pr-4 py-3.5 outline-none text-grey font-medium focus:border-primary transition-colors shadow-sm"
               />
             </div>
           </div>
