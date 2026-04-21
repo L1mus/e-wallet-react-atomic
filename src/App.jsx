@@ -29,8 +29,8 @@ function App() {
       </Route>
       <Route path="/register" element={<Register />} />
 
-      <Route path="/dashboard" element={<DashboardLayout />}>
-        <Route index element={<Dashboard />} />
+      <Route element={<DashboardLayout />}>
+        <Route path="dashboard" element={<Dashboard />} />
         <Route path="history" element={<History />} />
         <Route path="transfer" element={<Transfer />} />
         <Route path="transfer/:id" element={<TransferDetail />} />
