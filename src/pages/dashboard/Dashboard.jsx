@@ -146,7 +146,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-4 xl:col-span-3 bg-white border border-grey-light rounded-xl p-5 shadow-sm flex flex-col h-screen">
+        <div className=" lg:col-span-4 xl:col-span-3 bg-white border border-grey-light rounded-xl p-5 shadow-sm flex flex-col h-full">
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold text-black text-sm">
               Transaction History
