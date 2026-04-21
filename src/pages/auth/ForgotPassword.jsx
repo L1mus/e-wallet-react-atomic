@@ -8,7 +8,9 @@ import Button from "../../components/atoms/Button";
 import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 import iconMail from "../../assets/icons/mail.svg";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+// import { registerActions } from "../../redux/slice/registerSlice";
+import apiForgotPassword from "../../api/asyncForgotPassword";
 
 const schemaEmailForForgotPassword = z.object({
   email: z
@@ -20,6 +22,8 @@ const schemaEmailForForgotPassword = z.object({
 
 const ForgotPassword = () => {
   const stateLogin = useSelector((state) => state.loginReducer);
+  // const dispatch = useDispatch();
+  // const action = registerActions;
   const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
   const {
@@ -35,6 +39,12 @@ const ForgotPassword = () => {
         autoClose: 1000,
       });
     }
+    apiForgotPassword;
+    // const newUser = {
+    //   ...data,
+    //   password: "123456789",
+    // };
+    // dispatch(action.registerUser(newUser));
   };
 
   return (
