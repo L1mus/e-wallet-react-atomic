@@ -15,6 +15,8 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { registerActions } from "../../redux/slice/registerSlice";
+import { OrbitProgress } from "react-loading-indicators";
+import { isEmailExists } from "../../utils/storage";
 
 const schemaValidasiRegister = z
   .object({
@@ -24,11 +26,6 @@ const schemaValidasiRegister = z
       .min(1, { message: "Email is required" })
       .regex(/\S+@\S+\.\S+/, { message: "Invalid Email" })
       .email(),
-    phone: z
-      .string()
-      .min(1, { message: " Phone is required" })
-      .regex(/^[0-9]*$/g, { message: "Input must be character Number" })
-      .min(10, { message: " Minimum 10 characters" }),
     password: z
       .string()
       .min(1, { message: " Password is required" })
@@ -60,9 +57,29 @@ const Register = () => {
   }, [navigate, stateLogin.isLogin]);
 
   const onSubmit = (data) => {
+    const newUser = {
+      username: data.name,
+      email: data.email,
+      password: data.password,
+      pin: "",
+      balance: 0,
+      isVerified: true,
+      profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
+    };
+    console.log(data);
     setErrorMessage("");
-    dispatch(action.registerUser(data));
-    navigate("/login");
+    if (isEmailExists(data.email)) {
+      setErrorMessage(
+        "This email is already registered. Please use a different email address.",
+      );
+      return;
+    }
+    dispatch(action.registerUser(newUser));
+    navigate("/auth/login");
+  };
+
+  const handleOnchangeEmail = () => {
+    setErrorMessage("");
   };
 
   return (
@@ -116,6 +133,7 @@ const Register = () => {
               {...register("email", {
                 required: true,
               })}
+              onChange={handleOnchangeEmail}
               error={errors.email?.message || errorMessage}
             />
 
@@ -138,7 +156,7 @@ const Register = () => {
               {...register("confirmpassword", {
                 required: true,
               })}
-              error={errors.password?.message}
+              error={errors.confirmpassword?.message}
             />
 
             <Button type="submit" isFullWidth={true} className="mt-1">
