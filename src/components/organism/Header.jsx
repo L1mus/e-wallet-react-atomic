@@ -3,15 +3,12 @@ import { Menu, LogIn, UserPlus } from "lucide-react";
 import { Link } from "react-router";
 import Button from "../atoms/Button";
 import Avatar from "../atoms/Avatar";
-import DropdownMenu from "../molecules/DropdownMenu";
+import DropdownMenuAvatarHeader from "../molecules/DropdownMenuAvatarHeader";
 import cn from "../../utils/cn";
+import { useSelector } from "react-redux";
 
-const Header = ({
-  isLogin = false,
-  isDashboard = false,
-  user,
-  onOpenSidebar,
-}) => {
+const Header = ({ isDashboard = false, onOpenSidebar }) => {
+  const stateLogin = useSelector((state) => state.loginReducer);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
@@ -19,9 +16,9 @@ const Header = ({
   const toggleProfileDropdown = () =>
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
 
-  const currentUser = user || {
+  const currentUser = stateLogin.loginUser || {
     name: "User",
-    profilePicture: "../../../public/defaultAvatar.jpg",
+    profilePicture: "/defaultAvatar.jpg",
   };
 
   return (
@@ -36,14 +33,16 @@ const Header = ({
       <div className="flex items-center gap-3">
         {isDashboard ? (
           <>
-            <div className="hidden md:flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center">
-                <img src="../../../public/logo.png" alt="Logo" />
+            <Link to={"/"}>
+              <div className="hidden md:flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-md flex items-center justify-center">
+                  <img src="/logo.png" alt="Logo" />
+                </div>
+                <h1 className="text-primary font-semibold text-xl tracking-wide">
+                  E-Wallet
+                </h1>
               </div>
-              <h1 className="text-primary font-semibold text-xl tracking-wide">
-                E-Wallet
-              </h1>
-            </div>
+            </Link>
 
             <div className="flex md:hidden items-center gap-3 relative">
               <div
@@ -59,34 +58,36 @@ const Header = ({
                     Hello,
                   </span>
                   <span className="font-semibold text-sm tracking-wide">
-                    {currentUser.name}
+                    {currentUser.username}
                   </span>
                 </div>
               </div>
 
               {isProfileDropdownOpen && (
                 <div className="absolute top-15 left-0 z-50">
-                  <DropdownMenu />
+                  <DropdownMenuAvatarHeader />
                 </div>
               )}
             </div>
           </>
         ) : (
-          <div className="flex items-center gap-3">
-            <img
-              src="../../../public/logo.png"
-              alt="Logo"
-              className="w-10 h-10 bg-white/20 rounded-md flex items-center justify-center"
-            />
-            <h1 className="text-white font-semibold text-xl tracking-wide">
-              E-Wallet
-            </h1>
-          </div>
+          <Link to={"/"}>
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-10 h-10 bg-white/20 rounded-md flex items-center justify-center"
+              />
+              <h1 className="text-white font-semibold text-xl tracking-wide">
+                E-Wallet
+              </h1>
+            </div>
+          </Link>
         )}
       </div>
 
       <div className="flex items-center">
-        {isDashboard || isLogin ? (
+        {isDashboard || stateLogin.isLogin ? (
           <div className="flex items-center gap-4">
             <div className="hidden md:flex items-center gap-4 relative">
               <span
@@ -95,7 +96,7 @@ const Header = ({
                   isDashboard ? "text-black-light" : "text-white",
                 )}
               >
-                {currentUser.name}
+                {currentUser.username}
               </span>
 
               <div onClick={toggleProfileDropdown} className="cursor-pointer">
@@ -114,7 +115,7 @@ const Header = ({
 
               {isProfileDropdownOpen && (
                 <div className="absolute top-15 right-0 z-50">
-                  <DropdownMenu />
+                  <DropdownMenuAvatarHeader />
                 </div>
               )}
             </div>
