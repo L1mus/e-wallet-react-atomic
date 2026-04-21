@@ -15,7 +15,7 @@ const InputRadio = ({
         value={valueInput}
         checked={checked}
         onChange={onChange}
-        className="w-4 h-4 text-primary border-gray-300 focus:ring-primary cursor-pointer"
+        className="w-4 h-4 border-grey focus:ring-primary cursor-pointer checked:bg-primary"
       />
 
       <div className="w-16 flex items-center justify-center">
