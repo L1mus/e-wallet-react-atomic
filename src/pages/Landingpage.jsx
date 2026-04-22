@@ -20,8 +20,13 @@ import logoMoney from "../assets/icons/u_money-bill.svg";
 import logoUserCheck from "../assets/icons/u_user-check.svg";
 import logoMobile from "../assets/images/Mobile - Dashboard V2.png";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ModalConfirm from "../components/organism/ModalConfirm";
+import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+  const loginState = useSelector((state) => state.loginReducer);
   const reviews = [
     {
       id: 1,
@@ -46,6 +51,8 @@ const LandingPage = () => {
     },
   ];
 
+  const [modalState, setModalState] = useState({ isOpen: false });
+
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextReview = () => {
@@ -54,6 +61,11 @@ const LandingPage = () => {
 
   const prevReview = () => {
     setActiveIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1));
+  };
+
+  const handleConfirCreatePin = () => {
+    navigate("/auth/create-pin", { ...loginState.loginUser });
+    setModalState({ isOpen: false });
   };
 
   return (
@@ -302,6 +314,15 @@ const LandingPage = () => {
       </section>
 
       <Footer />
+      <ModalConfirm
+        isOpen={modalState.isOpen}
+        onClose={() => setModalState({ isOpen: false })}
+        onConfirm={handleConfirCreatePin}
+        title="Create Pin?"
+        message="Hello! Increase your account security. Create a transaction PIN now for safer and faster transactions."
+        confirmText="Yes, let's make it"
+        variant="primary"
+      />
     </div>
   );
 };
