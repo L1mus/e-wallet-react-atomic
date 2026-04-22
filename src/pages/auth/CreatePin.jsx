@@ -11,6 +11,7 @@ const CreatePin = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userData = location.state?.userData;
+  console.log(userData);
 
   const [step, setStep] = useState(1);
   const [firstPin, setFirstPin] = useState("");
