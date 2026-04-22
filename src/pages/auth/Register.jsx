@@ -58,6 +58,7 @@ const Register = () => {
 
   const onSubmit = (data) => {
     const newUser = {
+      id: stateRegister.lastId,
       username: data.name,
       email: data.email,
       password: data.password,
@@ -66,7 +67,6 @@ const Register = () => {
       isVerified: true,
       profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
     };
-    console.log(data);
     setErrorMessage("");
     if (isEmailExists(data.email)) {
       setErrorMessage(
