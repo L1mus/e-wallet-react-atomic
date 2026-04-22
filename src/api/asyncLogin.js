@@ -7,6 +7,7 @@ const apiLogin = (user) => {
       const foundUser = data.registerUser.find((u) => {
         return u.email === user.email && u.password === user.password;
       });
+      console.log(foundUser);
       if (foundUser) {
         resolve(foundUser);
       } else {
