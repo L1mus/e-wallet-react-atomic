@@ -1,9 +1,11 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiRegister from "../../api/asyncRegister";
 import apiForgotPassword from "../../api/asyncForgotPassword";
+import apiCreatePin from "../../api/asyncCreatePin";
 
 const initialState = {
   registerUser: [],
+  lastId: 0,
   isLoading: false,
   successMsg: null,
   error: {
@@ -17,11 +19,16 @@ const initialState = {
       isFulfilled: false,
       isRejected: false,
     },
-  },
-  userForgotPassword: {
-    isPending: false,
-    isFulfilled: false,
-    isRejected: false,
+    userForgotPassword: {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: false,
+    },
+    userCreatePin: {
+      isPending: false,
+      isFulfilled: false,
+      isRejected: false,
+    },
   },
 };
 
@@ -43,7 +50,21 @@ const forgotPasswordUser = createAsyncThunk(
   async (payload, { rejectWithValue }) => {
     try {
       const data = await apiForgotPassword(payload);
-      return data;
+      const newData = { ...data, password: 12345678 };
+      return newData;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+const createPinUser = createAsyncThunk(
+  "authRegister/createPinUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await apiCreatePin(payload);
+      const newData = { ...data, password: 12345678 };
+      return newData;
     } catch (error) {
       return rejectWithValue(error);
     }
@@ -75,7 +96,8 @@ const registerSlice = createSlice({
           prevState.status.userRegister.isFulfilled = true;
           prevState.isLoading = false;
           prevState.registerUser.push(action.payload);
-          prevState.successMsg = `Register success , Welcome ${action.payload?.email}`;
+          prevState.lastId++;
+          prevState.successMsg = `Register success , Welcome ${action.payload?.username}`;
         },
         rejected: (prevState, action) => {
           prevState.status.userRegister.isPending = false;
@@ -94,13 +116,37 @@ const registerSlice = createSlice({
           prevState.status.userForgotPassword.isPending = false;
           prevState.status.userForgotPassword.isFulfilled = true;
           prevState.isLoading = false;
-          prevState.registerUser.push(action.payload);
-          prevState.successMsg = `Register success , Welcome ${action.payload?.email}`;
+          const idx = prevState.registerUser.findIndex(
+            (u) => u.email === action.payload.email,
+          );
+          prevState.registerUser[idx] = action.payload;
+          prevState.successMsg = `Email sending to ${action.payload?.email}`;
         },
-        rejected: (prevState, action) => {
+        rejected: (prevState) => {
           prevState.status.userForgotPassword.isPending = false;
           prevState.status.userForgotPassword.isRejected = true;
-          prevState.error.userForgotPassword = action.payload;
+        },
+      })
+      .addAsyncThunk(createPinUser, {
+        pending: (prevState) => {
+          prevState.status.userForgotPassword.isPending = true;
+          prevState.status.userForgotPassword.isFulfilled = false;
+          prevState.status.userForgotPassword.isRejected = false;
+          prevState.isLoading = true;
+        },
+        fulfilled: (prevState, action) => {
+          prevState.status.userForgotPassword.isPending = false;
+          prevState.status.userForgotPassword.isFulfilled = true;
+          prevState.isLoading = false;
+          const idx = prevState.registerUser.findIndex(
+            (u) => u.email === action.payload.email,
+          );
+          prevState.registerUser[idx] = action.payload;
+          prevState.successMsg = `Email sending to ${action.payload?.email}`;
+        },
+        rejected: (prevState) => {
+          prevState.status.userForgotPassword.isPending = false;
+          prevState.status.userForgotPassword.isRejected = true;
         },
       });
   },
@@ -109,6 +155,8 @@ const registerSlice = createSlice({
 export const registerActions = {
   ...registerSlice.actions,
   registerUser,
+  forgotPasswordUser,
+  createPinUser,
 };
 
 export default registerSlice.reducer;
