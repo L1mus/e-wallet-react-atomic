@@ -9,8 +9,7 @@ import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 import iconMail from "../../assets/icons/mail.svg";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-// import { registerActions } from "../../redux/slice/registerSlice";
-import apiForgotPassword from "../../api/asyncForgotPassword";
+import { registerActions } from "../../redux/slice/registerSlice";
 
 const schemaEmailForForgotPassword = z.object({
   email: z
@@ -21,9 +20,9 @@ const schemaEmailForForgotPassword = z.object({
 });
 
 const ForgotPassword = () => {
-  const stateLogin = useSelector((state) => state.loginReducer);
-  // const dispatch = useDispatch();
-  // const action = registerActions;
+  const stateRegister = useSelector((state) => state.registerReducer);
+  const dispatch = useDispatch();
+  const action = registerActions;
   const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
   const {
@@ -32,19 +31,14 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schemaEmailForForgotPassword) });
 
-  const onHandleSubmit = () => {
+  const onHandleSubmit = (data) => {
+    dispatch(action.forgotPasswordUser(data));
     setIsSent(true);
-    if (stateLogin.successMsg) {
-      toast.success("A password reset link has been sent to", {
+    if (stateRegister.successMsg) {
+      toast.success(stateRegister.successMsg, {
         autoClose: 1000,
       });
     }
-    apiForgotPassword;
-    // const newUser = {
-    //   ...data,
-    //   password: "123456789",
-    // };
-    // dispatch(action.registerUser(newUser));
   };
 
   return (
