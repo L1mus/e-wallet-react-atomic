@@ -50,8 +50,13 @@ const LandingPage = () => {
       text: "Since I'm using this app, I'm not going to move to another similar app. Thank you Zwallet!",
     },
   ];
-
   const [modalState, setModalState] = useState({ isOpen: false });
+
+  // useEffect(() => {
+  //   if (loginState.isLogin && !loginState.loginUser?.pin) {
+  //     setModalState({ isOpen: true });
+  //   }
+  // }, [loginState.isLogin, loginState.loginUser.pin]);
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -64,7 +69,7 @@ const LandingPage = () => {
   };
 
   const handleConfirCreatePin = () => {
-    navigate("/auth/create-pin", { ...loginState.loginUser });
+    navigate("/auth/create-pin", { dataUser: loginState.loginUser });
     setModalState({ isOpen: false });
   };
 
