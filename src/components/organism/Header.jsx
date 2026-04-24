@@ -183,11 +183,10 @@ const Header = ({ isDashboard = false, onOpenSidebar }) => {
                     <Button
                       isHaveIcon={true}
                       Icon={UserPlus}
-                      className="text-black hover:text-white font-medium text-sm hover:outline-primary hover:bg-primary hover:scale-100 transition-none justify-start mt-1"
                       isFullWidth={true}
                       variant="rectangelWhite"
                     >
-                      Sign Up
+                      Sign Ups
                     </Button>
                   </Link>
                 </div>
