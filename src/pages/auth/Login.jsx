@@ -39,9 +39,15 @@ const Login = () => {
   }, [navigate, stateLogin.isLogin, stateLogin.successMsg]);
 
   const onSubmit = (data) => {
-    console.log(data);
     setAuthError("");
     dispatch(action.loginUser(data));
+    setTimeout(() => {
+      if (stateLogin.error) {
+        toast.error(stateLogin.error, {
+          autoClose: 2000,
+        });
+      }
+    }, 1500);
   };
 
   return (

@@ -102,6 +102,7 @@ const registerSlice = createSlice({
         rejected: (prevState, action) => {
           prevState.status.userRegister.isPending = false;
           prevState.status.userRegister.isRejected = true;
+          prevState.isLoading = false;
           prevState.error.userRegister = action.payload;
         },
       })
@@ -111,6 +112,7 @@ const registerSlice = createSlice({
           prevState.status.userForgotPassword.isFulfilled = false;
           prevState.status.userForgotPassword.isRejected = false;
           prevState.isLoading = true;
+          prevState.successMsg = null;
         },
         fulfilled: (prevState, action) => {
           prevState.status.userForgotPassword.isPending = false;
@@ -144,9 +146,11 @@ const registerSlice = createSlice({
           prevState.registerUser[idx] = action.payload;
           prevState.successMsg = `Email sending to ${action.payload?.email}`;
         },
-        rejected: (prevState) => {
+        rejected: (prevState, action) => {
           prevState.status.userForgotPassword.isPending = false;
           prevState.status.userForgotPassword.isRejected = true;
+          prevState.successMsg = null;
+          prevState.error = action.payload;
         },
       });
   },

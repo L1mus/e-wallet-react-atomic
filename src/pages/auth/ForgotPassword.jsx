@@ -38,6 +38,10 @@ const ForgotPassword = () => {
       toast.success(stateRegister.successMsg, {
         autoClose: 1000,
       });
+    } else {
+      toast.error(stateRegister.error, {
+        autoClose: 1000,
+      });
     }
   };
 

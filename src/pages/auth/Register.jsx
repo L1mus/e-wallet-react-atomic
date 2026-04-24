@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { registerActions } from "../../redux/slice/registerSlice";
 import { OrbitProgress } from "react-loading-indicators";
 import { isEmailExists } from "../../utils/storage";
+import { toast } from "react-toastify";
 
 const schemaValidasiRegister = z
   .object({
@@ -75,6 +76,11 @@ const Register = () => {
       return;
     }
     dispatch(action.registerUser(newUser));
+    if (stateRegister.successMsg) {
+      toast.success(stateRegister.successMsg, {
+        autoClose: 2000,
+      });
+    }
     navigate("/auth/login");
   };
 

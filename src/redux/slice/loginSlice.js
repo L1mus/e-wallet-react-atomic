@@ -53,6 +53,7 @@ const loginSlice = createSlice({
         prevState.status.userLogin.isFulfilled = false;
         prevState.status.userLogin.isRejected = false;
         prevState.isLoading = true;
+        prevState.error = null;
       },
       fulfilled: (prevState, action) => {
         prevState.status.userLogin.isPending = false;
@@ -65,6 +66,7 @@ const loginSlice = createSlice({
       rejected: (prevState, action) => {
         prevState.status.userLogin.isPending = false;
         prevState.status.userLogin.isRejected = true;
+        prevState.isLoading = false;
         prevState.error = action.payload;
         prevState.successMsg = null;
       },
