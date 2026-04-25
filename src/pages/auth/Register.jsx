@@ -15,9 +15,15 @@ import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { registerActions } from "../../redux/slice/registerSlice";
-import { OrbitProgress } from "react-loading-indicators";
 import { isEmailExists } from "../../utils/storage";
 import { toast } from "react-toastify";
+
+/**
+ * New User Registration page.
+ * Utilizes Zod for schema validation and Redux for storing new user data.
+ * * @component
+ * @returns {JSX.Element} The registration form with real-time validation.
+ */
 
 const schemaValidasiRegister = z
   .object({
@@ -57,7 +63,14 @@ const Register = () => {
     if (stateLogin.isLogin) navigate("/");
   }, [navigate, stateLogin.isLogin]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+    setErrorMessage("");
+    if (isEmailExists(data.email)) {
+      setErrorMessage(
+        "This email is already registered. Please use a different email address.",
+      );
+      return;
+    }
     const newUser = {
       id: stateRegister.lastId,
       username: data.name,
@@ -68,20 +81,16 @@ const Register = () => {
       isVerified: true,
       profilePicture: `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name)}&background=random`,
     };
-    setErrorMessage("");
-    if (isEmailExists(data.email)) {
-      setErrorMessage(
-        "This email is already registered. Please use a different email address.",
-      );
-      return;
-    }
-    dispatch(action.registerUser(newUser));
-    if (stateRegister.successMsg) {
-      toast.success(stateRegister.successMsg, {
+
+    try {
+      const result = await dispatch(action.registerUser(newUser)).unwrap();
+      toast.success(`Register success, Welcome, ${result.username}!`, {
         autoClose: 2000,
       });
+      navigate("/auth/login");
+    } catch (error) {
+      setErrorMessage(error || "Register Failed");
     }
-    navigate("/auth/login");
   };
 
   const handleOnchangeEmail = () => {
@@ -90,97 +99,94 @@ const Register = () => {
 
   return (
     <>
-      {stateRegister.isLoading ? (
-        <div className="grid place-items-center min-h-screen">
-          <OrbitProgress
-            variant="disc"
-            dense
-            color="#2948FF"
-            size="large"
-            text="Loading..."
-            textColor="#2948FF"
-          />
+      <AuthLayout
+        title="Start Accessing Banking Needs With All Devices and All Platforms With 30.000+ Users"
+        subtitle="Transfering money is easier than ever, you can access Zwallet wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!"
+        imagePath={imgWallet}
+      >
+        <div className="flex flex-col gap-3 mb-4">
+          <OauthButton icon={iconGoogle} text="Sign In With Google" />
+          <OauthButton icon={iconFacebook} text="Sign In With Facebook" />
         </div>
-      ) : (
-        <AuthLayout
-          title="Start Accessing Banking Needs With All Devices and All Platforms With 30.000+ Users"
-          subtitle="Transfering money is easier than ever, you can access Zwallet wherever you are. Desktop, laptop, mobile phone? we cover all of that for you!"
-          imagePath={imgWallet}
+
+        <div className="flex items-center mb-4">
+          <div className="flex-1 h-px bg-[#E8E8E8]" />
+          <span className="px-4 text-[#A9A9A9] text-sm font-normal">Or</span>
+          <div className="flex-1 h-px bg-[#E8E8E8]" />
+        </div>
+
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-3"
+          noValidate
         >
-          <div className="flex flex-col gap-3 mb-4">
-            <OauthButton icon={iconGoogle} text="Sign In With Google" />
-            <OauthButton icon={iconFacebook} text="Sign In With Facebook" />
-          </div>
+          <Input
+            {...register("name", { required: true })}
+            label="Full Name"
+            placeholder="Enter Your Name"
+            icon={iconUser}
+            error={errors.name?.message}
+            disabled={stateRegister.isLoading}
+          />
 
-          <div className="flex items-center mb-4">
-            <div className="flex-1 h-px bg-[#E8E8E8]" />
-            <span className="px-4 text-[#A9A9A9] text-sm font-normal">Or</span>
-            <div className="flex-1 h-px bg-[#E8E8E8]" />
-          </div>
+          <Input
+            label="Email"
+            type="email"
+            placeholder="Enter Your Email"
+            icon={iconMail}
+            {...register("email", {
+              required: true,
+            })}
+            onChange={handleOnchangeEmail}
+            error={errors.email?.message || errorMessage}
+            disabled={stateRegister.isLoading}
+          />
 
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-3"
-            noValidate
+          <Input
+            label="Password"
+            type="password"
+            placeholder="Create Strong Password"
+            icon={iconPassword}
+            onChange={() => setErrorMessage("")}
+            {...register("password", {
+              required: true,
+            })}
+            error={errors.password?.message}
+            disabled={stateRegister.isLoading}
+          />
+
+          <Input
+            label="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            icon={iconPassword}
+            {...register("confirmpassword", {
+              required: true,
+            })}
+            error={errors.confirmpassword?.message}
+            disabled={stateRegister.isLoading}
+          />
+
+          <Button
+            type="submit"
+            isFullWidth={true}
+            isLoading={stateRegister.isLoading}
+            className="mt-1"
           >
-            <Input
-              {...register("name", { required: true })}
-              label="Full Name"
-              placeholder="Enter Your Name"
-              icon={iconUser}
-              error={errors.name?.message}
-            />
+            {stateRegister.isLoading ? "Registering..." : "Register"}
+          </Button>
+        </form>
 
-            <Input
-              label="Email"
-              type="email"
-              placeholder="Enter Your Email"
-              icon={iconMail}
-              {...register("email", {
-                required: true,
-              })}
-              onChange={handleOnchangeEmail}
-              error={errors.email?.message || errorMessage}
-            />
-
-            <Input
-              label="Password"
-              type="password"
-              placeholder="Create Strong Password"
-              icon={iconPassword}
-              {...register("password", {
-                required: true,
-              })}
-              error={errors.password?.message}
-            />
-
-            <Input
-              label="confirmPassword"
-              type="password"
-              placeholder="Confirm Password"
-              icon={iconPassword}
-              {...register("confirmpassword", {
-                required: true,
-              })}
-              error={errors.confirmpassword?.message}
-            />
-
-            <Button type="submit" isFullWidth={true} className="mt-1">
-              Register
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-base">
-            <span className="text-grey font-normal">Have An Account? </span>
-            <Link
-              to="/auth/login"
-              className="text-primary font-medium hover:underline"
-            >
-              Login
-            </Link>
-          </div>
-        </AuthLayout>
-      )}
+        <div className="mt-4 text-center text-base">
+          <span className="text-grey font-normal">Have An Account? </span>
+          <Link
+            to="/auth/login"
+            className="text-primary font-medium hover:underline"
+          >
+            Login
+          </Link>
+        </div>
+      </AuthLayout>
     </>
   );
 };
