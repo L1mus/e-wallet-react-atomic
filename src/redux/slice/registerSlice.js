@@ -3,33 +3,22 @@ import apiRegister from "../../api/asyncRegister";
 import apiForgotPassword from "../../api/asyncForgotPassword";
 import apiCreatePin from "../../api/asyncCreatePin";
 
+/**
+ * Redux slice for managing registration and account recovery (forgot password, PIN creation).
+ * * @typedef {Object} RegisterState
+ * @property {Array} registerUser - List of registered users (Mock Database).
+ * @property {number} lastId - The last used ID for generating new registrations.
+ * @property {boolean} isLoading - Status for ongoing asynchronous operations.
+ * @property {string|null} successMsg - Success feedback message.
+ * @property {string|null} error - Centralized error message object.
+ */
+
 const initialState = {
   registerUser: [],
   lastId: 0,
   isLoading: false,
   successMsg: null,
-  error: {
-    userRegister: null,
-    userForgotPassword: null,
-    userChangePassword: null,
-  },
-  status: {
-    userRegister: {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false,
-    },
-    userForgotPassword: {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false,
-    },
-    userCreatePin: {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false,
-    },
-  },
+  error: null,
 };
 
 const registerUser = createAsyncThunk(
@@ -83,76 +72,70 @@ const registerSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    return builder
-      .addAsyncThunk(registerUser, {
-        pending: (prevState) => {
-          prevState.status.userRegister.isPending = true;
-          prevState.status.userRegister.isFulfilled = false;
-          prevState.status.userRegister.isRejected = false;
-          prevState.isLoading = true;
-        },
-        fulfilled: (prevState, action) => {
-          prevState.status.userRegister.isPending = false;
-          prevState.status.userRegister.isFulfilled = true;
-          prevState.isLoading = false;
-          prevState.registerUser.push(action.payload);
-          prevState.lastId++;
-          prevState.successMsg = `Register success , Welcome ${action.payload?.username}`;
-        },
-        rejected: (prevState, action) => {
-          prevState.status.userRegister.isPending = false;
-          prevState.status.userRegister.isRejected = true;
-          prevState.isLoading = false;
-          prevState.error.userRegister = action.payload;
-        },
+    builder
+      // registerUser
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
       })
-      .addAsyncThunk(forgotPasswordUser, {
-        pending: (prevState) => {
-          prevState.status.userForgotPassword.isPending = true;
-          prevState.status.userForgotPassword.isFulfilled = false;
-          prevState.status.userForgotPassword.isRejected = false;
-          prevState.isLoading = true;
-          prevState.successMsg = null;
-        },
-        fulfilled: (prevState, action) => {
-          prevState.status.userForgotPassword.isPending = false;
-          prevState.status.userForgotPassword.isFulfilled = true;
-          prevState.isLoading = false;
-          const idx = prevState.registerUser.findIndex(
-            (u) => u.email === action.payload.email,
-          );
-          prevState.registerUser[idx] = action.payload;
-          prevState.successMsg = `Email sending to ${action.payload?.email}`;
-        },
-        rejected: (prevState) => {
-          prevState.status.userForgotPassword.isPending = false;
-          prevState.status.userForgotPassword.isRejected = true;
-        },
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.registerUser.push(action.payload);
+        state.lastId++;
+        state.successMsg = `Register success, Welcome ${action.payload?.username}`;
       })
-      .addAsyncThunk(createPinUser, {
-        pending: (prevState) => {
-          prevState.status.userForgotPassword.isPending = true;
-          prevState.status.userForgotPassword.isFulfilled = false;
-          prevState.status.userForgotPassword.isRejected = false;
-          prevState.isLoading = true;
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      // forgotPasswordUser
+      .addCase(forgotPasswordUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const idx = state.registerUser.findIndex(
+          (u) => u.email === action.payload.email,
+        );
+        if (idx !== -1) {
+          state.registerUser[idx] = {
+            ...state.registerUser[idx],
+            ...action.payload,
+          };
+        }
+        state.successMsg = `Email sending to ${action.payload?.email}`;
+      })
+      // Create PIN
+      .addCase(createPinUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const idx = state.registerUser.findIndex(
+          (u) => u.email === action.payload.email,
+        );
+        if (idx !== -1) {
+          state.registerUser[idx] = {
+            ...state.registerUser[idx],
+            pin: action.payload.pin,
+          };
+        }
+        state.successMsg = "PIN created successfully";
+      })
+      .addMatcher(
+        (action) =>
+          action.type.startsWith("authRegister/") &&
+          action.type.endsWith("/pending"),
+        (state) => {
+          state.isLoading = true;
+          state.error = null;
+          state.successMsg = null;
         },
-        fulfilled: (prevState, action) => {
-          prevState.status.userForgotPassword.isPending = false;
-          prevState.status.userForgotPassword.isFulfilled = true;
-          prevState.isLoading = false;
-          const idx = prevState.registerUser.findIndex(
-            (u) => u.email === action.payload.email,
-          );
-          prevState.registerUser[idx] = action.payload;
-          prevState.successMsg = `Email sending to ${action.payload?.email}`;
+      )
+      .addMatcher(
+        (action) =>
+          action.type.startsWith("authRegister/") &&
+          action.type.endsWith("/rejected"),
+        (state, action) => {
+          state.isLoading = false;
+          state.error = action.payload;
         },
-        rejected: (prevState, action) => {
-          prevState.status.userForgotPassword.isPending = false;
-          prevState.status.userForgotPassword.isRejected = true;
-          prevState.successMsg = null;
-          prevState.error = action.payload;
-        },
-      });
+      );
   },
 });
 

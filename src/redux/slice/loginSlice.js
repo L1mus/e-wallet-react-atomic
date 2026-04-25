@@ -1,21 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiLogin from "../../api/asyncLogin";
 
+/**
+ * Redux slice for managing login authentication status.
+ * * @typedef {Object} LoginState
+ * @property {Object|null} loginUser - Profile data of the currently logged-in user.
+ * @property {boolean} isLogin - Status indicating if a user session is active.
+ * @property {boolean} isLoading - Status for ongoing login API requests.
+ * @property {string|null} error - Error message if the login attempt fails.
+ * @property {string} successMsg - Success feedback message after a successful login.
+ */
+
 const initialState = {
-  loginUser: {},
+  loginUser: null,
   isLogin: false,
   isLoading: false,
   error: null,
   successMsg: "",
-  status: {
-    userLogin: {
-      isPending: false,
-      isFulfilled: false,
-      isRejected: false,
-    },
-  },
 };
-
 const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (payload, { rejectWithValue }) => {
@@ -35,7 +37,7 @@ const loginSlice = createSlice({
     logoutUser: (prevState) => {
       return {
         ...prevState,
-        loginUser: {},
+        loginUser: null,
         isLogin: false,
       };
     },
@@ -45,32 +47,29 @@ const loginSlice = createSlice({
         error: null,
       };
     },
+    updateUserPin: (state, action) => {
+      if (state.loginUser) {
+        state.loginUser.pin = action.payload;
+      }
+    },
   },
   extraReducers: (builder) => {
-    return builder.addAsyncThunk(loginUser, {
-      pending: (prevState) => {
-        prevState.status.userLogin.isPending = true;
-        prevState.status.userLogin.isFulfilled = false;
-        prevState.status.userLogin.isRejected = false;
-        prevState.isLoading = true;
-        prevState.error = null;
-      },
-      fulfilled: (prevState, action) => {
-        prevState.status.userLogin.isPending = false;
-        prevState.status.userLogin.isFulfilled = true;
-        prevState.loginUser = action.payload;
-        prevState.isLogin = true;
-        prevState.isLoading = false;
-        prevState.successMsg = "Login Succes";
-      },
-      rejected: (prevState, action) => {
-        prevState.status.userLogin.isPending = false;
-        prevState.status.userLogin.isRejected = true;
-        prevState.isLoading = false;
-        prevState.error = action.payload;
-        prevState.successMsg = null;
-      },
-    });
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+        state.successMsg = "";
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isLogin = true;
+        state.loginUser = action.payload;
+        state.successMsg = "Login Success";
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      });
   },
 });
 
