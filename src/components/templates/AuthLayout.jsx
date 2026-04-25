@@ -1,18 +1,20 @@
 import iconMoneyWallet from "../../assets/icons/Money-Wallet.svg";
 
 /**
- * AuthLayout Component
- * @param {String} props.children
- * @param {String} props.title
- * @param {String} props.subtitle
- * @param {String} props.imagePath
- * @returns {JSX.element}
+ * Layout template for authentication-related pages.
+ * Features a split-screen design with an illustration on the right and a form on the left.
+ * * @param {Object} props - Component properties.
+ * @param {React.ReactNode} props.children - Main form content or page elements.
+ * @param {string} props.title - Main heading displayed above the form.
+ * @param {string} props.subtitle - Brief description displayed below the title.
+ * @param {string} props.imagePath - Path to the illustration image on the right panel.
+ * @returns {JSX.Element} A responsive layout spanning the full viewport height.
  */
 
 export const AuthLayout = ({ children, title, subtitle, imagePath }) => {
   return (
-    <div className="relative min-h-full bg-primary-light flex">
-      <div className="relative z-10 w-full min-h-full md:w-1/2 bg-white md:rounded-r-[40px] shadow-[10px_0_30px_rgba(0,0,0,0.15)] flex flex-col justify-center items-center px-8 py-31.5 lg:px-12 md:py-41">
+    <div className="relative min-h-screen bg-primary-light flex">
+      <div className="relative z-10 w-full min-h-screen md:w-1/2 bg-white md:rounded-r-[40px] shadow-[10px_0_30px_rgba(0,0,0,0.15)] flex flex-col justify-center items-center px-8 py-31.5 lg:px-12 md:py-41">
         <div className="w-full">
           <div className="mb-5 md:mt-0">
             <div className="flex items-center gap-2 mb-4 lg:mb-5">

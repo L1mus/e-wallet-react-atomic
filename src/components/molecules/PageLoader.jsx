@@ -1,5 +1,12 @@
 import Spinner from "../atoms/Spinner";
 
+/**
+ * Full-screen overlay loader for page transitions (used as a Suspense fallback).
+ * * @param {Object} props - Component properties.
+ * @param {string} [props.text="Loading, please wait..."] - The loading message to display.
+ * @returns {JSX.Element|null} A full-screen overlay with a spinner and text.
+ */
+
 const PageLoader = ({ isOpen, text = "Loading, please wait..." }) => {
   if (!isOpen) return null;
 

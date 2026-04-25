@@ -17,6 +17,13 @@ import Profile from "./pages/dashboard/Profile";
 import ChangePassword from "./pages/dashboard/ChangePassword";
 import ChangePin from "./pages/dashboard/ChangePin";
 
+/**
+ * Main Application Component (Root).
+ * Configures routing, page lazy loading, and the global Suspense wrapper.
+ * * @component
+ * @returns {JSX.Element} The navigation structure for the entire application.
+ */
+
 function App() {
   return (
     <Routes>
