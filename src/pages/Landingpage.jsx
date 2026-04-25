@@ -24,9 +24,17 @@ import ModalConfirm from "../components/organism/ModalConfirm";
 import { useNavigate } from "react-router";
 import { useSelector } from "react-redux";
 
+/**
+ * Main Landing Page of the application.
+ * Utilizes derived state evaluation to passively prompt active users to create a transaction PIN.
+ * This approach avoids React 'cascading renders' and cleanly handles component unmounting.
+ * * @component
+ * @returns {JSX.Element} The promotional landing page with conditional security prompts.
+ */
+
 const LandingPage = () => {
   const navigate = useNavigate();
-  const loginState = useSelector((state) => state.loginReducer);
+  const { loginUser, isLogin } = useSelector((state) => state.loginReducer);
   const reviews = [
     {
       id: 1,
@@ -50,13 +58,19 @@ const LandingPage = () => {
       text: "Since I'm using this app, I'm not going to move to another similar app. Thank you Zwallet!",
     },
   ];
-  const [modalState, setModalState] = useState({ isOpen: false });
+  const [isPromptDismissed, setIsPromptDismissed] = useState(false);
 
-  // useEffect(() => {
-  //   if (loginState.isLogin && !loginState.loginUser?.pin) {
-  //     setModalState({ isOpen: true });
-  //   }
-  // }, [loginState.isLogin, loginState.loginUser.pin]);
+  const showPinModal = Boolean(
+    isLogin && loginUser && !loginUser.pin && !isPromptDismissed,
+  );
+
+  const handleConfirmCreatePin = () => {
+    navigate("/auth/create-pin", { userData: loginUser });
+  };
+
+  const handleCloseModal = () => {
+    setIsPromptDismissed(true);
+  };
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -66,11 +80,6 @@ const LandingPage = () => {
 
   const prevReview = () => {
     setActiveIndex((prev) => (prev === 0 ? reviews.length - 1 : prev - 1));
-  };
-
-  const handleConfirCreatePin = () => {
-    navigate("/auth/create-pin", { dataUser: loginState.loginUser });
-    setModalState({ isOpen: false });
   };
 
   return (
@@ -320,9 +329,9 @@ const LandingPage = () => {
 
       <Footer />
       <ModalConfirm
-        isOpen={modalState.isOpen}
-        onClose={() => setModalState({ isOpen: false })}
-        onConfirm={handleConfirCreatePin}
+        isOpen={showPinModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmCreatePin}
         title="Create Pin?"
         message="Hello! Increase your account security. Create a transaction PIN now for safer and faster transactions."
         confirmText="Yes, let's make it"
