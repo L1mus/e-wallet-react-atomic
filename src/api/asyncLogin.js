@@ -5,9 +5,10 @@ const apiLogin = (user) => {
     setTimeout(() => {
       const data = getDataUserRegister(user);
       const foundUser = data.registerUser.find((u) => {
-        return u.email === user.email && u.password === user.password;
+        return (
+          u.email === user.email && String(u.password) === String(user.password)
+        );
       });
-      console.log(foundUser);
       if (foundUser) {
         resolve(foundUser);
       } else {
