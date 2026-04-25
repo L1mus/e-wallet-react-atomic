@@ -18,7 +18,7 @@ import registerReducer from "./slice/registerSlice";
 const persistConfig = {
   key: "ew-DB",
   storage,
-  //   whitelist: [loginReducer, registerReducer],
+  whitelist: ["loginReducer", "registerReducer"],
 };
 
 const persistedReducer = persistCombineReducers(persistConfig, {
