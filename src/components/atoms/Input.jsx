@@ -47,7 +47,7 @@ export const Input = ({
           placeholder={placeholder}
           className={cn(
             "w-full h-11 bg-white border rounded-lg text-black text-sm transition-all duration-200 placeholder:text-grey",
-            "outline-none",
+            "outline-none disabled:cursor-not-allowed",
             icon ? "pl-12" : "pl-4",
             isPassword ? "pr-12" : "pr-4",
             error
