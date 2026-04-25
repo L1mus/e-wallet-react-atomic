@@ -23,7 +23,6 @@ const ForgotPassword = () => {
   const stateRegister = useSelector((state) => state.registerReducer);
   const dispatch = useDispatch();
   const action = registerActions;
-  const [email, setEmail] = useState("");
   const [isSent, setIsSent] = useState(false);
   const {
     register,
@@ -31,16 +30,16 @@ const ForgotPassword = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schemaEmailForForgotPassword) });
 
-  const onHandleSubmit = (data) => {
-    dispatch(action.forgotPasswordUser(data));
-    setIsSent(true);
-    if (stateRegister.successMsg) {
-      toast.success(stateRegister.successMsg, {
-        autoClose: 1000,
+  const onHandleSubmit = async (data) => {
+    try {
+      await dispatch(action.forgotPasswordUser(data)).unwrap();
+      setIsSent(true);
+      toast.success(`Email sending to ${data.email}`, {
+        autoClose: 2000,
       });
-    } else {
-      toast.error(stateRegister.error, {
-        autoClose: 1000,
+    } catch (error) {
+      toast.error(error || "Failed to send link. Please try again", {
+        autoClose: 2500,
       });
     }
   };
@@ -74,19 +73,24 @@ const ForgotPassword = () => {
           noValidate
         >
           <Input
-            {...register("email", { required: true })}
             label="Email"
             type="email"
             placeholder="Enter Your Email"
             icon={iconMail}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
+            error={errors.email?.message}
+            disabled={stateRegister?.isLoading}
           />
           {errors.email && (
             <p className="text-danger">{errors.email.message}</p>
           )}
 
-          <Button type="submit" isFullWidth={true} className="mt-2">
+          <Button
+            type="submit"
+            isFullWidth={true}
+            className="mt-2"
+            isLoading={stateRegister?.isLoading}
+          >
             {isSent ? "Resend Link" : "Submit"}
           </Button>
         </form>
