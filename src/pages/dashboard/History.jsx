@@ -9,7 +9,7 @@ import Pagination from "../../components/molecules/Pagination";
 import ModalConfirm from "../../components/organism/ModalConfirm";
 import Avatar from "../../components/atoms/Avatar";
 import cn from "../../utils/cn";
-import { transactionActions } from "../../redux/slice/transactionslice";
+import { transactionActions } from "../../redux/slice/transactionSlice";
 
 const History = () => {
   const dispatch = useDispatch();
@@ -21,17 +21,41 @@ const History = () => {
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
   const { transactions } = useSelector((state) => state.transactionReducer);
+  const { loginUser } = useSelector((state) => state.loginReducer);
+
+  const userTransactions = useMemo(() => {
+    return transactions.filter(
+      (tx) => tx.senderId === loginUser?.id || tx.receiverId === loginUser?.id,
+    );
+  }, [transactions, loginUser?.id]);
+
+  const displayData = useMemo(() => {
+    return userTransactions.map((tx) => {
+      const isExpense =
+        tx.senderId === loginUser?.id && tx.transactionType === "TRANSFER";
+
+      return {
+        id: tx.id,
+        name: tx.receiverNameSnapshot,
+        phone: tx.receiverPhoneSnapshot || "-",
+        amount: `Rp ${tx.amount.toLocaleString("id-ID")}`,
+        type: isExpense ? "expense" : "income",
+        avatar:
+          tx.profilePicture || `https://i.pravatar.cc/150?u=${tx.receiverId}`,
+        transactionType: tx.transactionType,
+        timestamp: tx.timestamp,
+      };
+    });
+  }, [userTransactions, loginUser?.id]);
 
   const filteredData = useMemo(() => {
-    return transactions.filter((item) => {
-      const nameMatch = (item.receiverNameSnapshot || item.paymentMethod || "")
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
-      const amountMatch = item.amount.toString().includes(searchQuery);
-
-      return nameMatch || amountMatch;
-    });
-  }, [transactions, searchQuery]);
+    if (!searchQuery) return displayData;
+    const q = searchQuery.toLowerCase();
+    return displayData.filter(
+      (item) =>
+        item.name.toLowerCase().includes(q) || item.phone.includes(searchQuery),
+    );
+  }, [displayData, searchQuery]);
 
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -55,18 +79,15 @@ const History = () => {
   };
 
   const handleConfirmDelete = () => {
-    if (modalState.id) {
-      dispatch(transactionActions.removeTransaction(modalState.id));
-
-      if (currentItems.length === 1 && currentPage > 1) {
-        setSearchParams({
-          ...Object.fromEntries(searchParams),
-          page: (currentPage - 1).toString(),
-        });
-      }
-
-      setModalState({ isOpen: false, id: null });
+    dispatch(transactionActions.removeTransaction(modalState.id));
+    if (currentItems.length === 1 && currentPage > 1) {
+      setSearchParams({
+        search: searchQuery,
+        page: (currentPage - 1).toString(),
+      });
     }
+
+    setModalState({ isOpen: false, id: null });
   };
 
   console.log(currentItems);
@@ -97,7 +118,7 @@ const History = () => {
             {currentItems.length > 0 ? (
               currentItems.map((item, index) => (
                 <TableContent
-                  key={index}
+                  key={item.id}
                   className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                 >
                   <td className="px-2 py-4 md:px-6">
@@ -120,6 +141,7 @@ const History = () => {
                       item.type === "income" ? "text-success" : "text-danger",
                     )}
                   >
+                    {item.type === "income" ? "+" : "-"}
                     {item.amount}
                   </td>
                   <td className="hidden md:table-cell px-2 py-4 md:px-6 text-right">
