@@ -8,7 +8,7 @@ import Button from "../../components/atoms/Button";
 
 import Avatar from "../../components/atoms/Avatar";
 import InputRadio from "../../components/atoms/InputRadio";
-import { transactionActions } from "../../redux/slice/transactionslice";
+import { transactionActions } from "../../redux/slice/transactionSlice";
 import { loginActions } from "../../redux/slice/loginSlice";
 import { registerActions } from "../../redux/slice/registerSlice";
 
@@ -36,33 +36,24 @@ const TopUp = () => {
   const formatIdr = (number) => new Intl.NumberFormat("id-ID").format(number);
 
   const handleSubmit = async () => {
-    if (!orderAmount || orderAmount < 10000)
+    if (!orderAmount || orderAmount < 10000) {
       return toast.error("Minimum top-up: Rp 10.000");
+    }
+
+    const selectedMethodName = paymentMethods.find(
+      (m) => m.id === selectedMethod,
+    )?.name;
 
     try {
-      const selectedMethodName = paymentMethods.find(
-        (m) => m.id === selectedMethod,
-      )?.name;
-      const payload = {
-        userId: user.id,
-        profilePicture: user.profilePicture,
-        usernameSnapshot: user.username,
-        amount: orderAmount,
-        currentBalance: user.balance || 0,
-        paymentMethod: selectedMethodName,
-      };
-
-      const result = await dispatch(transactionActions.topUp(payload)).unwrap();
-      dispatch(loginActions.syncActiveSession({ balance: result.newBalance }));
-
-      dispatch(
-        registerActions.updateBalance({
-          userId: user.id,
-          newBalance: result.newBalance,
+      const result = await dispatch(
+        transactionActions.topUp({
+          amount: orderAmount,
+          paymentMethod: selectedMethodName,
         }),
-      );
-
+      ).unwrap();
+      dispatch(loginActions.syncActiveSession({ balance: result.newBalance }));
       toast.success("Top-up Successful!");
+      setNominal("");
       navigate("/dashboard");
     } catch (err) {
       toast.error(err || "Top-up failed");
