@@ -17,6 +17,9 @@ import Profile from "./pages/dashboard/Profile";
 import ChangePassword from "./pages/dashboard/ChangePassword";
 import ChangePin from "./pages/dashboard/ChangePin";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
+
 /**
  * Main Application Component (Root).
  * Configures routing, page lazy loading, and the global Suspense wrapper.
@@ -27,24 +30,28 @@ import ChangePin from "./pages/dashboard/ChangePin";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="auth">
-        <Route path="login" element={<Login />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="enter-pin" element={<EnterPin />} />
-        <Route path="create-pin" element={<CreatePin />} />
+      <Route element={<PublicRoute />}>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="auth">
+          <Route path="login" element={<Login />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="enter-pin" element={<EnterPin />} />
+          <Route path="create-pin" element={<CreatePin />} />
+        </Route>
+        <Route path="/register" element={<Register />} />
       </Route>
-      <Route path="/register" element={<Register />} />
 
-      <Route element={<DashboardLayout />}>
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="history" element={<History />} />
-        <Route path="transfer" element={<Transfer />} />
-        <Route path="transfer/:id" element={<TransferDetail />} />
-        <Route path="topup" element={<TopUp />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="profile/change-password" element={<ChangePassword />} />
-        <Route path="profile/change-pin" element={<ChangePin />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<DashboardLayout />}>
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="history" element={<History />} />
+          <Route path="transfer" element={<Transfer />} />
+          <Route path="transfer/:id" element={<TransferDetail />} />
+          <Route path="topup" element={<TopUp />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="profile/change-password" element={<ChangePassword />} />
+          <Route path="profile/change-pin" element={<ChangePin />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
