@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { loginActions } from "../../redux/slice/loginSlice";
 import SidebarNavItem from "./SidebarNavItem";
 import LayoutDashboard from "../../assets/icons/dashboard-two.svg?react";
 import ArrowLeftRight from "../../assets/icons/Send.svg?react";
@@ -17,8 +19,11 @@ const menuItems = [
 
 const SidebarContent = ({ onClose }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const action = loginActions;
 
   const handleLogout = () => {
+    dispatch(action.logoutUser());
     onClose();
     navigate("/login");
   };
