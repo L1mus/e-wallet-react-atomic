@@ -88,7 +88,7 @@ const transactionSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    deleteTransaction: (state, action) => {
+    removeTransaction: (state, action) => {
       state.transactions = state.transactions.filter(
         (tx) => tx.id !== action.payload,
       );
@@ -111,6 +111,7 @@ const transactionSlice = createSlice({
         state.currentTransaction = action.payload.transaction;
         state.successMsg = "Top-up successful!";
       })
+      .addCase("authLogin/logoutUser", () => initialState)
 
       //shared pending & rejected via addMatcher
       .addMatcher(
