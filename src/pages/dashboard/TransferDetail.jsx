@@ -8,7 +8,7 @@ import Stepper from "../../components/molecules/Stepper";
 import ModalPin from "../../components/organism/ModalPin";
 import ModalStatus from "../../components/organism/ModalStatus";
 import Input from "../../components/atoms/Input";
-import { transactionActions } from "../../redux/slice/transactionslice";
+import { transactionActions } from "../../redux/slice/transactionSlice";
 import { loginActions } from "../../redux/slice/loginSlice";
 
 import ArrowLeftRight from "../../assets/icons/Send.svg?react";
@@ -40,6 +40,13 @@ const TransferDetail = () => {
     }
   }, [receiver, navigate]);
 
+  useEffect(() => {
+    if (sender && !sender.pin) {
+      toast.info("Create a security PIN first to make a transfer.");
+      navigate("/auth/create-pin");
+    }
+  }, [sender, navigate]);
+
   const handleOpenPinModal = () => {
     const nominal = parseInt(amount);
     if (!nominal || nominal < 10000) {
@@ -58,22 +65,20 @@ const TransferDetail = () => {
 
     setIsPinModalOpen(false);
 
-    const payload = {
-      receiverId: receiver.id,
-      receiverName: receiver.username,
-      receiverPhone: receiver.phone,
-      profilePicture: receiver.profilePicture,
-      amount: parseInt(amount),
-      notes: notes,
-    };
-
     try {
-      await dispatch(transactionActions.transfer(payload)).unwrap();
-      dispatch(
-        loginActions.syncActiveSession({
-          balance: sender.balance - parseInt(amount),
+      const result = await dispatch(
+        transactionActions.transfer({
+          receiverId: receiver.id,
+          receiverName: receiver.username,
+          receiverPhone: receiver.phone,
+          profilePicture: receiver.profilePicture,
+          amount: parseInt(amount),
+          notes,
         }),
-      );
+      ).unwrap();
+
+      dispatch(loginActions.syncActiveSession({ balance: result.newBalance }));
+
       setStatusModal({ isOpen: true, status: "success" });
     } catch (err) {
       console.error("Transfer Error:", err);
@@ -213,7 +218,7 @@ const TransferDetail = () => {
           label: "View History",
           onClick: () => {
             handleCloseStatusModal();
-            navigate("/dashboard/history");
+            navigate("/history");
           },
         }}
       />
