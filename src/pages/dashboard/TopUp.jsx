@@ -1,20 +1,25 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 import { Banknote, BadgeCheck } from "lucide-react";
 import Upload from "../../assets/icons/Upload.svg?react";
+import Button from "../../components/atoms/Button";
 
 import Avatar from "../../components/atoms/Avatar";
 import InputRadio from "../../components/atoms/InputRadio";
+import { transactionActions } from "../../redux/slice/transactionslice";
+import { loginActions } from "../../redux/slice/loginSlice";
+import { registerActions } from "../../redux/slice/registerSlice";
 
 const TopUp = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { loginUser: user } = useSelector((state) => state.loginReducer);
+  const { isLoading } = useSelector((state) => state.transactionReducer);
   const [nominal, setNominal] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("bri");
-
-  const user = {
-    name: "Ghaluh 1",
-    phone: "(239) 555-0108",
-    avatar: "https://i.pravatar.cc/150?u=1",
-    isVerified: true,
-  };
 
   const paymentMethods = [
     { id: "bri", name: "Bank Rakyat Indonesia", logo: "/bri.png" },
@@ -24,12 +29,44 @@ const TopUp = () => {
     { id: "ovo", name: "Ovo", logo: "/ovo.png" },
   ];
 
-  const tax = 4000;
   const orderAmount = nominal ? parseInt(nominal) : 0;
+  const tax = orderAmount > 0 ? Math.floor(orderAmount * 0.1) : 0;
   const subTotal = orderAmount > 0 ? orderAmount + tax : 0;
 
-  const formatIdr = (amount) => {
-    return new Intl.NumberFormat("id-ID").format(amount);
+  const formatIdr = (number) => new Intl.NumberFormat("id-ID").format(number);
+
+  const handleSubmit = async () => {
+    if (!orderAmount || orderAmount < 10000)
+      return toast.error("Minimum top-up: Rp 10.000");
+
+    try {
+      const selectedMethodName = paymentMethods.find(
+        (m) => m.id === selectedMethod,
+      )?.name;
+      const payload = {
+        userId: user.id,
+        profilePicture: user.profilePicture,
+        usernameSnapshot: user.username,
+        amount: orderAmount,
+        currentBalance: user.balance || 0,
+        paymentMethod: selectedMethodName,
+      };
+
+      const result = await dispatch(transactionActions.topUp(payload)).unwrap();
+      dispatch(loginActions.syncActiveSession({ balance: result.newBalance }));
+
+      dispatch(
+        registerActions.updateBalance({
+          userId: user.id,
+          newBalance: result.newBalance,
+        }),
+      );
+
+      toast.success("Top-up Successful!");
+      navigate("/dashboard");
+    } catch (err) {
+      toast.error(err || "Top-up failed");
+    }
   };
 
   return (
@@ -47,15 +84,15 @@ const TopUp = () => {
             </h3>
             <div className="bg-grey-light rounded-xl p-4 flex items-center gap-4">
               <Avatar
-                imageSrc={user.avatar}
-                className="w-16 h-16 rounded-xl object-cover shadow-sm"
+                imageSrc={user?.profilePicture}
+                className="w-21 h-21 rounded-xl object-cover shadow-sm"
               />
               <div className="flex flex-col items-start gap-1">
                 <span className="font-bold text-black text-base">
-                  {user.name}
+                  {user?.username}
                 </span>
-                <span className="text-grey text-sm">{user.phone}</span>
-                {user.isVerified && (
+                <span className="text-grey text-sm">{user?.phone || "-"}</span>
+                {user?.isVerified && (
                   <span className="inline-flex items-center gap-1 bg-primary text-white text-xs font-bold px-2 py-1 rounded-md mt-1">
                     <BadgeCheck size={14} /> Verified
                   </span>
@@ -76,7 +113,14 @@ const TopUp = () => {
               <input
                 type="number"
                 value={nominal}
+                min="0"
+                onKeyDown={(e) => {
+                  if (["-", "+", "e", "E", ".", ","].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
                 onChange={(e) => setNominal(e.target.value)}
+                disabled={isLoading}
                 placeholder="Enter Nominal Transfer"
                 className="w-full border border-grey-light rounded-xl pl-12 pr-4 py-3.5 outline-none text-grey font-medium focus:border-primary transition-colors shadow-sm"
               />
@@ -100,6 +144,7 @@ const TopUp = () => {
                   logo={method.logo}
                   checked={selectedMethod === method.id}
                   onChange={(e) => setSelectedMethod(e.target.value)}
+                  disabled={isLoading}
                 />
               ))}
             </div>
@@ -140,9 +185,14 @@ const TopUp = () => {
               </div>
             </div>
 
-            <button className="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primary/90 transition-all shadow-md active:scale-[0.99] cursor-pointer">
+            <Button
+              onClick={handleSubmit}
+              isLoading={isLoading}
+              isFullWidth
+              className="font-bold py-3.5 rounded-xl shadow-md cursor-pointer"
+            >
               Submit
-            </button>
+            </Button>
 
             <p className="text-xs text-grey mt-4 leading-relaxed">
               *Get Discount if you pay with Bank Central Asia

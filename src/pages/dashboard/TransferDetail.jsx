@@ -1,44 +1,95 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { Banknote, BadgeCheck, Star } from "lucide-react";
 import Avatar from "../../components/atoms/Avatar";
 import Stepper from "../../components/molecules/Stepper";
 import ModalPin from "../../components/organism/ModalPin";
 import ModalStatus from "../../components/organism/ModalStatus";
 import Input from "../../components/atoms/Input";
-import PinInput from "../../components/atoms/PinInput";
+import { transactionActions } from "../../redux/slice/transactionslice";
+import { loginActions } from "../../redux/slice/loginSlice";
+
 import ArrowLeftRight from "../../assets/icons/Send.svg?react";
 import Bill from "../../assets/icons/u_money-bill.svg";
+import Button from "../../components/atoms/Button";
 
 const TransferDetail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const user = location.state?.user || {
-    name: "Ghaluh 1",
-    phone: "(239) 555-0108",
-    avatar: "https://i.pravatar.cc/150?u=1",
-    isVerified: true,
-  };
+  const receiver = location.state?.receiver;
 
+  const { loginUser: sender } = useSelector((state) => state.loginReducer);
+  const { isLoading } = useSelector((state) => state.transactionReducer);
+
+  const [amount, setAmount] = useState("");
+  const [notes, setNotes] = useState("");
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+
   const [statusModal, setStatusModal] = useState({
     isOpen: false,
     status: null,
   });
 
-  const handlePinSubmit = (pin) => {
-    console.log("PIN Submit:", pin);
-    setIsPinModalOpen(false);
+  useEffect(() => {
+    if (!receiver) {
+      navigate("/transfer");
+    }
+  }, [receiver, navigate]);
 
-    setTimeout(() => {
-      setStatusModal({ isOpen: true, status: "success" });
-    }, 500);
+  const handleOpenPinModal = () => {
+    const nominal = parseInt(amount);
+    if (!nominal || nominal < 10000) {
+      return toast.error("Minimum transfer: Rp 10,000");
+    }
+    if (nominal > sender?.balance) {
+      return toast.error("Insufficient balance");
+    }
+    setIsPinModalOpen(true);
   };
 
-  const handleTransferAgain = () => {
+  const handleConfirmTransfer = async (pin) => {
+    if (pin !== sender?.pin) {
+      return toast.error("The PIN you entered is incorrect");
+    }
+
+    setIsPinModalOpen(false);
+
+    const payload = {
+      receiverId: receiver.id,
+      receiverName: receiver.username,
+      receiverPhone: receiver.phone,
+      profilePicture: receiver.profilePicture,
+      amount: parseInt(amount),
+      notes: notes,
+    };
+
+    try {
+      await dispatch(transactionActions.transfer(payload)).unwrap();
+      dispatch(
+        loginActions.syncActiveSession({
+          balance: sender.balance - parseInt(amount),
+        }),
+      );
+      setStatusModal({ isOpen: true, status: "success" });
+    } catch (err) {
+      console.error("Transfer Error:", err);
+      setStatusModal({ isOpen: true, status: "failed" });
+    }
+  };
+
+  const handleCloseStatusModal = () => {
+    const isSuccess = statusModal.status === "success";
     setStatusModal({ isOpen: false, status: null });
-    navigate("/transfer");
+    dispatch(transactionActions.clearError());
+    dispatch(transactionActions.clearCurrentTransaction());
+
+    if (isSuccess) {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -65,16 +116,18 @@ const TransferDetail = () => {
           <div className="bg-gray-100 rounded-xl p-4 flex items-center justify-between border border-grey-light">
             <div className="flex items-center gap-4">
               <Avatar
-                imageSrc={user.avatar}
-                className="w-16 h-16 rounded-xl object-cover shadow-sm"
+                imageSrc={receiver?.profilePicture}
+                className=" w-16 h-16 md:w-21 md:h-21 rounded-xl object-cover shadow-sm"
               />
-              <div className="flex flex-col items-start gap-1">
-                <span className="font-semibold text-black text-sm">
-                  {user.name}
+              <div className="flex flex-col items-start">
+                <span className="font-semibold text-black text-xs md:text-base">
+                  {receiver?.username}
                 </span>
-                <span className="text-grey text-sm">{user.phone}</span>
-                {user.isVerified && (
-                  <span className="inline-flex items-center gap-1 bg-primary text-white text-sm font-normal px-2 py-1 rounded-md mt-1">
+                <span className="text-grey text-xs md:text-base">
+                  {receiver?.phone || "-"}
+                </span>
+                {receiver?.isVerified && (
+                  <span className="inline-flex items-center md:gap-1 bg-primary text-white text-sm font-normal px-2 py-1 rounded-md mt-1">
                     <BadgeCheck size={16} /> Verified
                   </span>
                 )}
@@ -99,6 +152,14 @@ const TransferDetail = () => {
               placeholder={"Enter Nominal Transfer"}
               icon={Bill}
               className={"placeholder:font-medium"}
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              min="0"
+              onKeyDown={(e) => {
+                if (["-", "+", "e", "E", ".", ","].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
           </div>
         </div>
@@ -110,44 +171,50 @@ const TransferDetail = () => {
             something
           </p>
           <textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
             placeholder="Enter Some Notes"
             className="w-full border border-grey-light rounded-xl p-4 outline-none text-grey font-medium focus:border-primary min-h-35 resize-y placeholder:font-medium"
           ></textarea>
         </div>
 
         <div className="px-4 md:px-0">
-          <button
-            onClick={() => setIsPinModalOpen(true)}
-            className="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primary/90 transition-all cursor-pointer"
+          <Button
+            onClick={handleOpenPinModal}
+            isLoading={isLoading}
+            isFullWidth
+            className="py-4 rounded-xl font-bold text-lg"
           >
-            Submit & Transfer
-          </button>
+            Continue to Transfer
+          </Button>
         </div>
       </div>
 
       <ModalPin
         isOpen={isPinModalOpen}
         onClose={() => setIsPinModalOpen(false)}
-        onConfirm={handlePinSubmit}
-        transferToName={user?.name}
-      >
-        <PinInput />
-      </ModalPin>
+        onConfirm={handleConfirmTransfer}
+        transferToName={receiver?.username}
+      />
 
       <ModalStatus
         isOpen={statusModal.isOpen}
+        onClose={handleCloseStatusModal}
         status={statusModal.status}
-        transferToName={user?.name}
+        transferToName={receiver?.username}
         primaryAction={{
-          label: statusModal.status === "success" ? "Done" : "Try Again",
-          onClick: () => setStatusModal({ isOpen: false, status: null }),
-        }}
-        secondaryAction={{
           label:
             statusModal.status === "success"
-              ? "Transfer Again"
-              : "Back To Dashboard",
-          onClick: handleTransferAgain,
+              ? "Back to Dashboard"
+              : "Try Again",
+          onClick: handleCloseStatusModal,
+        }}
+        secondaryAction={{
+          label: "View History",
+          onClick: () => {
+            handleCloseStatusModal();
+            navigate("/dashboard/history");
+          },
         }}
       />
     </div>

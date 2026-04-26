@@ -1,51 +1,49 @@
 import { useMemo } from "react";
 import { useSearchParams, useNavigate } from "react-router";
+import { useSelector } from "react-redux";
 import { Search, Star } from "lucide-react";
 import Table from "../../components/organism/Table";
 import TableContent from "../../components/molecules/TableContent";
 import Avatar from "../../components/atoms/Avatar";
 import Stepper from "../../components/molecules/Stepper";
 import Send from "../../assets/icons/Send.svg?react";
+import Input from "../../components/atoms/Input";
 
 const Transfer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
   const navigate = useNavigate();
 
-  const peopleData = [
-    {
-      id: 1,
-      name: "Ghaluh 1",
-      phone: "(239) 555-0108",
-      avatar: "https://i.pravatar.cc/150?u=1",
-      isVerified: true,
-    },
-    {
-      id: 2,
-      name: "Albert Flores",
-      phone: "(480) 555-0103",
-      avatar: "https://i.pravatar.cc/150?u=2",
-      isVerified: false,
-    },
-    {
-      id: 3,
-      name: "Bessie Cooper",
-      phone: "(225) 555-0118",
-      avatar: "https://i.pravatar.cc/150?u=3",
-      isVerified: true,
-    },
-  ];
+  const { loginUser } = useSelector((state) => state.loginReducer);
+  const { registerUser } = useSelector((state) => state.registerReducer);
 
-  const filteredData = useMemo(() => {
-    return peopleData.filter(
-      (item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.phone.includes(searchQuery),
-    );
-  }, [searchQuery]);
+  const filteredPeople = useMemo(() => {
+    if (!registerUser) return [];
 
-  const handleUserSelect = (user) => {
-    navigate(`/transfer/${user.id}`, { state: { user } });
+    return registerUser.filter((user) => {
+      const isNotMe = user.email !== loginUser?.email;
+      const query = searchQuery.toLowerCase();
+      const matchSearch =
+        user.username?.toLowerCase().includes(query) ||
+        user.phone?.includes(query);
+      return isNotMe && matchSearch;
+    });
+  }, [registerUser, loginUser, searchQuery]);
+
+  const handleUserSelect = (receiverData) => {
+    navigate(`/transfer/${receiverData.id}`, {
+      state: { receiver: receiverData },
+    });
+  };
+
+  const handleSearchChange = (e) => {
+    const val = e.target.value;
+    if (val) {
+      setSearchParams({ search: val });
+    } else {
+      searchParams.delete("search");
+      setSearchParams(searchParams);
+    }
   };
 
   return (
@@ -68,56 +66,47 @@ const Transfer = () => {
           <div>
             <h2 className="font-bold text-black text-lg">Find People</h2>
             <p className="text-sm font-medium text-grey mt-1">
-              {filteredData.length} Result Found{" "}
+              {filteredPeople.length} Result Found
               {searchQuery && `For ${searchQuery}`}
             </p>
           </div>
           <div className="relative w-full md:w-87.5">
-            <input
+            <Input
               type="text"
               value={searchQuery}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value) {
-                  setSearchParams({ search: value });
-                } else {
-                  searchParams.delete("search");
-                  setSearchParams(searchParams);
-                }
-              }}
+              onChange={handleSearchChange}
               placeholder="Enter Number Or Full Name"
-              className="w-full border border-grey rounded-lg px-4 py-2.5 pr-10 outline-none text-sm text-grey font-medium focus:border-primary transition-all placeholder:text-grey placeholder:font-medium"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-grey w-4 h-4" />
           </div>
         </div>
         <div className="w-full overflow-x-auto">
           <Table>
-            {filteredData.length > 0 ? (
-              filteredData.map((item, index) => (
+            {filteredPeople.length > 0 ? (
+              filteredPeople.map((item, index) => (
                 <TableContent
-                  key={item.id}
+                  key={index}
                   onClick={() => handleUserSelect(item)}
                   className={`cursor-pointer hover:bg-primary/5 transition-colors ${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
                 >
                   <td className="px-2 py-4 md:px-6">
                     <div className="flex items-center gap-3 md:gap-6">
                       <Avatar
-                        imageSrc={item.avatar}
+                        imageSrc={item.profilePicture}
                         className="w-12 h-12 rounded-lg shrink-0"
                       />
-                      <div className="flex flex-col">
+                      <div className="flex flex-row justify-between items-center flex-1">
                         <span className="text-grey font-bold md:font-medium">
-                          {item.name}
+                          {item.username}
                         </span>
-                        <span className="text-grey-light text-sm md:hidden mt-0.5">
-                          {item.phone}
+                        <span className="text-grey text-sm mt-0.5">
+                          {item.phone || `-`}
                         </span>
                       </div>
                     </div>
                   </td>
                   <td className="hidden md:table-cellpx-2 py-4 md:px-6 text-grey text-center">
-                    {item.phone}
+                    {item.phone || "-"}
                   </td>
                   <td className="px-2 py-4 md:px-6 text-right">
                     <Star className="text-gray-400 hover:text-yellow-400 w-5 h-5 ml-auto" />

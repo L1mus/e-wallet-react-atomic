@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
 import { Search, History as HistoryIcon, Trash2 } from "lucide-react";
 
 import Table from "../../components/organism/Table";
@@ -8,66 +9,29 @@ import Pagination from "../../components/molecules/Pagination";
 import ModalConfirm from "../../components/organism/ModalConfirm";
 import Avatar from "../../components/atoms/Avatar";
 import cn from "../../utils/cn";
+import { transactionActions } from "../../redux/slice/transactionslice";
 
 const History = () => {
+  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Ghaluh 1",
-      phone: "082116304337",
-      amount: "Rp.50.000",
-      type: "income",
-      avatar: "https://i.pravatar.cc/150?u=1",
-    },
-    {
-      id: 2,
-      name: "Cameron Williamson",
-      phone: "081233344455",
-      amount: "Rp.75.000",
-      type: "expense",
-      avatar: "https://i.pravatar.cc/150?u=2",
-    },
-    {
-      id: 3,
-      name: "Cody Fisher",
-      phone: "085677788899",
-      amount: "Rp.150.000",
-      type: "income",
-      avatar: "https://i.pravatar.cc/150?u=3",
-    },
-    {
-      id: 4,
-      name: "Kristin Watson",
-      phone: "089911122233",
-      amount: "Rp.200.000",
-      type: "expense",
-      avatar: "https://i.pravatar.cc/150?u=4",
-    },
-    {
-      id: 5,
-      name: "Floyd Miles",
-      phone: "081122233344",
-      amount: "Rp.50.000",
-      type: "income",
-      avatar: "https://i.pravatar.cc/150?u=5",
-    },
-  ]);
-
   const [modalState, setModalState] = useState({ isOpen: false, id: null });
 
   const itemsPerPage = 10;
   const searchQuery = searchParams.get("search") || "";
   const currentPage = parseInt(searchParams.get("page") || "1", 10);
 
+  const { transactions } = useSelector((state) => state.transactionReducer);
+
   const filteredData = useMemo(() => {
-    return data.filter(
-      (item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.phone.includes(searchQuery),
-    );
-  }, [searchQuery, data]);
+    return transactions.filter((item) => {
+      const nameMatch = (item.receiverNameSnapshot || item.paymentMethod || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase());
+      const amountMatch = item.amount.toString().includes(searchQuery);
+
+      return nameMatch || amountMatch;
+    });
+  }, [transactions, searchQuery]);
 
   const totalItems = filteredData.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -91,22 +55,21 @@ const History = () => {
   };
 
   const handleConfirmDelete = () => {
-    const updatedData = data.filter((item) => item.id !== modalState.id);
-    setData(updatedData);
+    if (modalState.id) {
+      dispatch(transactionActions.removeTransaction(modalState.id));
 
-    const newFilteredTotal = updatedData.filter(
-      (item) =>
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.phone.includes(searchQuery),
-    ).length;
+      if (currentItems.length === 1 && currentPage > 1) {
+        setSearchParams({
+          ...Object.fromEntries(searchParams),
+          page: (currentPage - 1).toString(),
+        });
+      }
 
-    const newTotalPages = Math.ceil(newFilteredTotal / itemsPerPage);
-    if (currentPage > newTotalPages && newTotalPages > 0) {
-      setSearchParams({ search: searchQuery, page: newTotalPages.toString() });
+      setModalState({ isOpen: false, id: null });
     }
-
-    setModalState({ isOpen: false, id: null });
   };
+
+  console.log(currentItems);
 
   return (
     <div className="w-full pb-10">
@@ -134,17 +97,17 @@ const History = () => {
             {currentItems.length > 0 ? (
               currentItems.map((item, index) => (
                 <TableContent
-                  key={item.id}
+                  key={index}
                   className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
                 >
                   <td className="px-2 py-4 md:px-6">
                     <div className="flex items-center gap-3 md:gap-6">
                       <Avatar
-                        imageSrc={item.avatar}
+                        imageSrc={item.profilePicture}
                         className="hidden md:block w-12 h-12 rounded-lg shrink-0"
                       />
                       <span className="text-grey font-bold md:font-medium">
-                        {item.name}
+                        {item.receiverNameSnapshot}
                       </span>
                     </div>
                   </td>
