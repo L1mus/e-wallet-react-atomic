@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import CardBalance from "../../components/organism/CardBalance";
 import IncomeChart from "../../components/organism/IncomeChart";
 import CardHistory from "../../components/organism/CardHistory";
@@ -11,59 +13,11 @@ import MoneyWithdraw from "../../assets/icons/u_money-withdraw.svg?react";
 import ArrowGrowth from "../../assets/icons/ArrowRise-s.svg?react";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  const mockTransactions = [
-    {
-      id: 1,
-      name: "Robert Fox",
-      status: "Transfer",
-      imageSrc: "https://i.pravatar.cc/150?u=u2",
-      amount: "+Rp50.000",
-      type: "income",
-    },
-    {
-      id: 2,
-      name: "Floyd Miles",
-      status: "Send",
-      imageSrc: "https://i.pravatar.cc/150?u=u3",
-      amount: "-Rp50.000",
-      type: "expense",
-    },
-    {
-      id: 3,
-      name: "Ujang",
-      status: "Send",
-      imageSrc: "https://i.pravatar.cc/150?u=u4",
-      amount: "-Rp50.000",
-      type: "expense",
-    },
-    {
-      id: 4,
-      name: "Raulemons",
-      status: "Transfer",
-      imageSrc: "https://i.pravatar.cc/150?u=u5",
-      amount: "+Rp50.000",
-      type: "income",
-    },
-    {
-      id: 5,
-      name: "Reiva",
-      status: "Transfer",
-      imageSrc: "https://i.pravatar.cc/150?u=u6",
-      amount: "+Rp50.000",
-      type: "income",
-    },
-    {
-      id: 6,
-      name: "Thobie",
-      status: "Send",
-      imageSrc: "https://i.pravatar.cc/150?u=u7",
-      amount: "-Rp50.000",
-      type: "expense",
-    },
-  ];
+  const { loginUser } = useSelector((state) => state.loginReducer);
+  const { transactions } = useSelector((state) => state.transactionReducer);
 
   useEffect(() => {
     const loadData = async () => {
@@ -75,6 +29,26 @@ const Dashboard = () => {
     loadData();
   }, []);
 
+  const totalIncome = transactions
+    .filter(
+      (tx) =>
+        tx.receiverId === loginUser?.id &&
+        (tx.transactionType === "TOPUP" || tx.transactionType === "TRANSFER"),
+    )
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const totalExpense = transactions
+    .filter(
+      (tx) =>
+        tx.senderId === loginUser?.id && tx.transactionType === "TRANSFER",
+    )
+    .reduce((sum, tx) => sum + tx.amount, 0);
+
+  const recentTransactions = transactions.slice(0, 5);
+
+  const formatBalance = (amount) =>
+    typeof amount === "number" ? amount.toLocaleString("id-ID") : "0";
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pb-10">
@@ -82,31 +56,31 @@ const Dashboard = () => {
           <div className="grid grid-cols-3 gap-2 sm:gap-4">
             <CardBalance
               title="Balance"
-              balance="120.000"
-              children={<Balance className={"w-6 h-6"} />}
+              balance={formatBalance(loginUser?.balance)}
+              children={<Balance className="w-6 h-6" />}
               Icon={ArrowGrowth}
-              iconStyle={"text-success"}
+              iconStyle="text-success"
               growthIndicators="+2%"
               growthPeriod="3 Days Ago"
-            ></CardBalance>
+            />
             <CardBalance
               title="Income"
-              balance="2.120.000"
-              children={<MoneyWithdraw className={"w-6 h-6"} />}
+              balance={formatBalance(totalIncome)}
+              children={<MoneyWithdraw className="w-6 h-6" />}
               Icon={ArrowGrowth}
-              iconStyle={" text-success"}
+              iconStyle="text-success"
               growthIndicators="+11.01%"
               growthPeriod="Today"
-            ></CardBalance>
+            />
             <CardBalance
               title="Expense"
-              balance="200.000"
-              children={<MoneyWithdraw className={"rotate-180 w-6 h-6"} />}
+              balance={formatBalance(totalExpense)}
+              children={<MoneyWithdraw className="rotate-180 w-6 h-6" />}
               Icon={ArrowGrowth}
-              iconStyle={"rotate-180 text-danger"}
+              iconStyle="rotate-180 text-danger"
               growthIndicators="-5.06%"
               growthPeriod="Today"
-            ></CardBalance>
+            />
           </div>
 
           <div className="flex sm:flex-row justify-between items-center gap-4 sm:border sm:border-grey-light sm:rounded-xl sm:p-4 sm:px-6 sm:bg-white sm:shadow-sm">
@@ -120,6 +94,7 @@ const Dashboard = () => {
                 Icon={IconTopUp}
                 iconClassName={"w-6 h-6"}
                 className="flex-1 sm:flex-none h-11 px-4 sm:px-6 text-xs sm:text-sm whitespace-nowrap"
+                onClick={() => navigate("/topup")}
               >
                 Top Up
               </Button>
@@ -129,6 +104,7 @@ const Dashboard = () => {
                 Icon={IconTransfer}
                 iconClassName={"w-6 h-6"}
                 className="flex-1 sm:flex-none h-11 px-4 sm:px-6 text-xs sm:text-sm whitespace-nowrap"
+                onClick={() => navigate("/transfer")}
               >
                 Transfer
               </Button>
@@ -158,28 +134,44 @@ const Dashboard = () => {
 
           <div
             className="flex flex-col gap-5 overflow-y-auto pr-1 [&::-webkit-scrollbar]:w-1.5
-  [&::-webkit-scrollbar-track]:bg-transparent
-  [&::-webkit-scrollbar-thumb]:bg-gray-50
-  [&::-webkit-scrollbar-thumb]:rounded-full
-  hover:[&::-webkit-scrollbar-thumb]:bg-gray-300"
+            [&::-webkit-scrollbar-track]:bg-transparent
+            [&::-webkit-scrollbar-thumb]:bg-gray-50
+            [&::-webkit-scrollbar-thumb]:rounded-full
+            hover:[&::-webkit-scrollbar-thumb]:bg-gray-300"
           >
-            {mockTransactions.map((tx) => (
-              <CardHistory
-                key={tx.id}
-                name={tx.name}
-                status={tx.status}
-                imageSrc={tx.imageSrc}
-                amount={
-                  <span
-                    className={
-                      tx.type === "income" ? "text-success" : "text-danger"
+            {recentTransactions.length > 0 ? (
+              recentTransactions.map((tx) => {
+                const isExpense =
+                  tx.senderId === loginUser?.id &&
+                  tx.transactionType === "TRANSFER";
+
+                return (
+                  <CardHistory
+                    key={tx.id}
+                    name={tx.receiverNameSnapshot}
+                    status={
+                      tx.transactionType === "TOPUP" ? "Top Up" : "Transfer"
                     }
-                  >
-                    {tx.amount}
-                  </span>
-                }
-              />
-            ))}
+                    imageSrc={
+                      tx.profilePicture ||
+                      `https://i.pravatar.cc/150?u=${tx.receiverId}`
+                    }
+                    amount={
+                      <span
+                        className={isExpense ? "text-danger" : "text-success"}
+                      >
+                        {isExpense ? "-" : "+"}Rp{" "}
+                        {tx.amount.toLocaleString("id-ID")}
+                      </span>
+                    }
+                  />
+                );
+              })
+            ) : (
+              <p className="text-grey text-sm text-center py-8">
+                No transactions yet.
+              </p>
+            )}
           </div>
         </div>
       </div>
