@@ -76,6 +76,7 @@ const Register = () => {
       username: data.name,
       email: data.email,
       password: data.password,
+      phone: "",
       pin: "",
       balance: 0,
       isVerified: true,
