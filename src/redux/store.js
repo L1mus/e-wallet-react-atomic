@@ -14,7 +14,7 @@ import env from "../utils/environment";
 
 import loginReducer from "./slice/loginSlice";
 import registerReducer from "./slice/registerSlice";
-import transactionReducer from "./slice/transactionslice";
+import transactionReducer from "./slice/transactionSlice";
 
 const persistConfig = {
   key: "ew-DB",
