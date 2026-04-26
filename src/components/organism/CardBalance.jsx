@@ -17,8 +17,8 @@ const CardBalance = ({
           <div className="text-primary ">{children}</div>
           <p className="text-xs sm:text-base">{title}</p>
         </div>
-        <p className="text-xs sm:text-sm lg:text-base font-semibold text-center text ">
-          Rp.{balance}K
+        <p className="text-xs sm:text-sm lg:text-base font-semibold text-center">
+          Rp {balance}
         </p>
         <div className="flex gap-0.5 items-center sm:gap-1">
           <p className="text-xs sm:text-sm">{growthIndicators}</p>
