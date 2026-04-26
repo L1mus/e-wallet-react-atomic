@@ -109,6 +109,13 @@ const registerSlice = createSlice({
         error: initialState.error,
       };
     },
+    updateBalance: (state, action) => {
+      const { userId, newBalance } = action.payload;
+      const userIdx = state.registerUser.findIndex((u) => u.id === userId);
+      if (userIdx !== -1) {
+        state.registerUser[userIdx].balance = newBalance;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
