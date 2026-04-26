@@ -13,7 +13,9 @@ const EnterPin = () => {
   const stateLogin = useSelector((state) => state.loginReducer);
 
   useEffect(() => {
-    if (stateLogin.isLogin) navigate("/login");
+    if (!stateLogin.isLogin) {
+      navigate("/auth/login", { replace: true });
+    }
   }, [navigate, stateLogin.isLogin]);
 
   const handleVerify = () => {
@@ -25,7 +27,7 @@ const EnterPin = () => {
       toast.success("Authorization Successful! Transaction continued", {
         autoClose: 1000,
       });
-      navigate("/");
+      navigate("/dashboard");
     } else {
       setError("The PIN you entered is incorrect");
     }

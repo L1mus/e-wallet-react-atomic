@@ -8,7 +8,7 @@ const ModalStatus = ({
   primaryAction,
   secondaryAction,
 }) => {
-  const isSuccess = status === "failed";
+  const isSuccess = status === "success";
 
   const content = {
     success: {
