@@ -14,16 +14,19 @@ import env from "../utils/environment";
 
 import loginReducer from "./slice/loginSlice";
 import registerReducer from "./slice/registerSlice";
+import transactionReducer from "./slice/transactionslice";
 
 const persistConfig = {
   key: "ew-DB",
   storage,
-  whitelist: ["loginReducer", "registerReducer"],
+  whitelist: ["loginReducer", "registerReducer", "transactionReducer"],
+  blacklist: ["activeTooltip", "mousePosition", "zIndex"],
 };
 
 const persistedReducer = persistCombineReducers(persistConfig, {
   loginReducer,
   registerReducer,
+  transactionReducer,
 });
 
 const store = configureStore({
