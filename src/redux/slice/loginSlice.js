@@ -52,6 +52,11 @@ const loginSlice = createSlice({
         state.loginUser.pin = action.payload;
       }
     },
+    syncActiveSession: (state, action) => {
+      if (state.loginUser) {
+        state.loginUser = { ...state.loginUser, ...action.payload };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder

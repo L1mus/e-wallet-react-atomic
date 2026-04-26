@@ -1,9 +1,22 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import User from "../../assets/icons/2 User.svg?react";
 import Input from "../../components/atoms/Input";
 import Button from "../../components/atoms/Button";
+import { registerActions } from "../../redux/slice/registerSlice";
+import { loginActions } from "../../redux/slice/loginSlice";
+import { toast } from "react-toastify";
 
 const ChangePassword = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { loginUser } = useSelector((state) => state.loginReducer);
+  const { isLoading } = useSelector((state) => state.registerReducer);
+  const actionLogin = loginActions;
+  const actionRegister = registerActions;
+
   const [formData, setFormData] = useState({
     existingPassword: "",
     newPassword: "",
@@ -15,9 +28,43 @@ const ChangePassword = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Password Data Submitted:", formData);
+
+    if (
+      !formData.existingPassword ||
+      !formData.newPassword ||
+      !formData.confirmPassword
+    ) {
+      return toast.error("Please fill in all password fields");
+    }
+
+    if (formData.newPassword !== formData.confirmPassword) {
+      return toast.error("New password confirmation does not match.");
+    }
+
+    if (formData.existingPassword !== loginUser.password) {
+      return toast.error("The old password you entered is incorrect.");
+    }
+
+    try {
+      const payload = {
+        email: loginUser.email,
+        existingPassword: formData.existingPassword,
+        newPassword: formData.newPassword,
+      };
+
+      const result = await dispatch(
+        actionRegister.changePasswordUser(payload),
+      ).unwrap();
+
+      dispatch(actionLogin.syncActiveSession(result));
+
+      toast.success("Password successfully updated!");
+      navigate("/profile");
+    } catch (err) {
+      toast.error(err || "Failed to change password");
+    }
   };
 
   return (
@@ -38,6 +85,7 @@ const ChangePassword = () => {
             value={formData.existingPassword}
             onChange={handleInputChange}
             placeholder="Enter Your Existing Password"
+            disabled={isLoading}
           />
 
           <Input
@@ -47,6 +95,7 @@ const ChangePassword = () => {
             value={formData.newPassword}
             onChange={handleInputChange}
             placeholder="Enter Your New Password"
+            disabled={isLoading}
           />
 
           <Input
@@ -56,10 +105,16 @@ const ChangePassword = () => {
             value={formData.confirmPassword}
             onChange={handleInputChange}
             placeholder="Re-Type Your New Password"
+            disabled={isLoading}
           />
 
           <div className="mt-4">
-            <Button type="submit" className="w-full py-3.5 font-bold shadow-md">
+            <Button
+              type="submit"
+              isLoading={isLoading}
+              isFullWidth={true}
+              className="py-3.5 font-bold shadow-md"
+            >
               Submit
             </Button>
           </div>

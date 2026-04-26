@@ -1,25 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { registerActions } from "../../redux/slice/registerSlice";
+import { loginActions } from "../../redux/slice/loginSlice";
 import { Pencil, Trash2 } from "lucide-react";
 import User from "../../assets/icons/2 User.svg?react";
 
 import Avatar from "../../components/atoms/Avatar";
 import Input from "../../components/atoms/Input";
 import Button from "../../components/atoms/Button";
+import { toast } from "react-toastify";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const userFromRedux = {
-    avatarSrc: null,
-    fullName: "Ghaluh Wizard",
-    phone: "08085550111",
-    email: "Ghaluhwizard23@gmail.com",
-  };
+  const dispatch = useDispatch();
+  const { loginUser } = useSelector((state) => state.loginReducer);
+  const { isLoading } = useSelector((state) => state.registerReducer);
+  const actionLogin = loginActions;
+  const actionRegister = registerActions;
 
   const [formData, setFormData] = useState({
-    fullName: userFromRedux.fullName || "",
-    phone: userFromRedux.phone || "",
-    email: userFromRedux.email || "",
+    fullName: loginUser?.username || "",
+    phone: loginUser?.phone || "",
+    email: loginUser?.email || "",
   });
 
   const handleInputChange = (e) => {
@@ -27,12 +30,26 @@ const Profile = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Menyimpan data ke Redux...", formData);
-  };
+    if (!formData.fullName) return toast.error("Name is required");
 
-  const currentAvatar = userFromRedux.avatarSrc || "/defaultAvatar.jpg";
+    try {
+      const payload = {
+        email: loginUser.email,
+        username: formData.fullName,
+        phone: formData.phone,
+      };
+
+      const result = await dispatch(
+        actionRegister.updateProfileUser(payload),
+      ).unwrap();
+      dispatch(actionLogin.syncActiveSession(result));
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      toast.error(error || "Update failed");
+    }
+  };
 
   return (
     <div className="w-full pb-10">
@@ -47,12 +64,19 @@ const Profile = () => {
             Profile Picture
           </h3>
 
-          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+          <div
+            key={loginUser?.username + loginUser?.phone}
+            className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6"
+          >
             <div className="bg-gray-50 rounded-xl p-4 w-32 h-32 flex items-center justify-center shrink-0 border border-gray-100">
               <Avatar
-                imageSrc={currentAvatar}
-                className="w-20 h-20 rounded-full object-cover"
+                imageSrc={loginUser?.profilePicture}
+                className="w-24 h-24 mb-4 border-2 border-primary-light"
               />
+              <h2 className="text-xl font-bold text-black">
+                {loginUser?.username}
+              </h2>
+              <p className="text-grey text-sm">{loginUser?.email}</p>
             </div>
 
             <div className="flex flex-col gap-3 w-full md:w-auto">
@@ -83,6 +107,7 @@ const Profile = () => {
             value={formData.fullName}
             onChange={handleInputChange}
             placeholder="Enter Full Name"
+            disabled={isLoading}
           />
 
           <Input
@@ -92,6 +117,7 @@ const Profile = () => {
             value={formData.phone}
             onChange={handleInputChange}
             placeholder="Enter Your Number Phone"
+            disabled={isLoading}
           />
 
           <Input
@@ -101,7 +127,7 @@ const Profile = () => {
             value={formData.email}
             disabled={true}
             placeholder="Enter Your Email"
-            className="bg-gray-50 cursor-not-allowed opacity-70"
+            className="bg-gray-50 cursor-not-allowed opacity-80"
           />
 
           <div>
@@ -133,9 +159,11 @@ const Profile = () => {
           <div className="mt-4">
             <Button
               type="submit"
-              className="w-full py-3.5 font-bold shadow-md transition-none hover:scale-100 "
+              isLoading={isLoading}
+              isFullWidth={true}
+              className="py-3.5 font-bold shadow-md mt-4"
             >
-              Submit
+              Save Changes
             </Button>
           </div>
         </form>

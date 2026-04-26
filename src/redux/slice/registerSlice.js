@@ -2,6 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiRegister from "../../api/asyncRegister";
 import apiForgotPassword from "../../api/asyncForgotPassword";
 import apiCreatePin from "../../api/asyncCreatePin";
+import apiUpdateProfile from "../../api/asyncUpdateProfile";
+import apiChangePassword from "../../api/asyncChangePassword";
+import apiChangePin from "../../api/asyncChangePin";
 
 /**
  * Redux slice for managing registration and account recovery (forgot password, PIN creation).
@@ -56,6 +59,42 @@ const createPinUser = createAsyncThunk(
       return newData;
     } catch (error) {
       return rejectWithValue(error);
+    }
+  },
+);
+
+const updateProfileUser = createAsyncThunk(
+  "authRegister/updateProfileUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await apiUpdateProfile(payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || error);
+    }
+  },
+);
+
+export const changePasswordUser = createAsyncThunk(
+  "authRegister/changePasswordUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await apiChangePassword(payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  },
+);
+
+const changePinUser = createAsyncThunk(
+  "authRegister/changePinUser",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await apiChangePin(payload);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || error);
     }
   },
 );
@@ -117,6 +156,48 @@ const registerSlice = createSlice({
         }
         state.successMsg = "PIN created successfully";
       })
+      // Update Profile
+      .addCase(updateProfileUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const idx = state.registerUser.findIndex(
+          (u) => u.email === action.payload.email,
+        );
+        if (idx !== -1) {
+          state.registerUser[idx] = {
+            ...state.registerUser[idx],
+            ...action.payload,
+          };
+        }
+        state.successMsg = "Profil berhasil diperbarui!";
+      })
+      // Change Password
+      .addCase(changePasswordUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const idx = state.registerUser.findIndex(
+          (u) => u.email === action.payload.email,
+        );
+        if (idx !== -1) {
+          state.registerUser[idx] = {
+            ...state.registerUser[idx],
+            password: action.payload.password,
+          };
+        }
+        state.successMsg = "Kata sandi berhasil diubah!";
+      })
+      //Change PIN
+      .addCase(changePinUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        const idx = state.registerUser.findIndex(
+          (u) => u.email === action.payload.email,
+        );
+        if (idx !== -1) {
+          state.registerUser[idx] = {
+            ...state.registerUser[idx],
+            pin: action.payload.pin,
+          };
+        }
+        state.successMsg = "PIN keamanan berhasil diubah!";
+      })
       .addMatcher(
         (action) =>
           action.type.startsWith("authRegister/") &&
@@ -144,6 +225,9 @@ export const registerActions = {
   registerUser,
   forgotPasswordUser,
   createPinUser,
+  updateProfileUser,
+  changePasswordUser,
+  changePinUser,
 };
 
 export default registerSlice.reducer;

@@ -1,15 +1,39 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import User from "../../assets/icons/2 User.svg?react";
 
 import Button from "../../components/atoms/Button";
 import PinInput from "../../components/atoms/PinInput";
+import { registerActions } from "../../redux/slice/registerSlice";
+import { loginActions } from "../../redux/slice/loginSlice";
+import { toast } from "react-toastify";
 
 const ChangePin = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loginUser } = useSelector((state) => state.loginReducer);
+  const { isLoading } = useSelector((state) => state.registerReducer);
   const [pin, setPin] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("PIN Submitted:", pin);
+    if (pin.length < 6) return toast.error("The PIN must be 6 digits.");
+
+    try {
+      const result = await dispatch(
+        registerActions.changePinUser({
+          email: loginUser.email,
+          newPin: pin,
+        }),
+      ).unwrap();
+
+      dispatch(loginActions.syncActiveSession(result));
+      toast.success("PIN successfully updated!");
+      navigate("/profile");
+    } catch (err) {
+      toast.error(err);
+    }
   };
 
   return (
@@ -43,7 +67,9 @@ const ChangePin = () => {
 
           <Button
             type="submit"
-            className="w-full py-3.5 font-lexend font-bold shadow-md"
+            isLoading={isLoading}
+            isFullWidth
+            className="font-bold"
           >
             Submit
           </Button>
