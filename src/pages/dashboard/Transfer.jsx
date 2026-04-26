@@ -8,6 +8,7 @@ import Avatar from "../../components/atoms/Avatar";
 import Stepper from "../../components/molecules/Stepper";
 import Send from "../../assets/icons/Send.svg?react";
 import Input from "../../components/atoms/Input";
+import { mockUsers } from "../../data/mockUsers";
 
 const Transfer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -17,18 +18,24 @@ const Transfer = () => {
   const { loginUser } = useSelector((state) => state.loginReducer);
   const { registerUser } = useSelector((state) => state.registerReducer);
 
-  const filteredPeople = useMemo(() => {
-    if (!registerUser) return [];
+  const allUsers = useMemo(() => {
+    const userMap = new Map();
+    mockUsers.forEach((u) => userMap.set(u.email, u));
+    registerUser.forEach((u) => userMap.set(u.email, u));
+    return Array.from(userMap.values());
+  }, [registerUser]);
 
-    return registerUser.filter((user) => {
+  const filteredPeople = useMemo(() => {
+    return allUsers.filter((user) => {
       const isNotMe = user.email !== loginUser?.email;
       const query = searchQuery.toLowerCase();
       const matchSearch =
+        !query ||
         user.username?.toLowerCase().includes(query) ||
         user.phone?.includes(query);
       return isNotMe && matchSearch;
     });
-  }, [registerUser, loginUser, searchQuery]);
+  }, [allUsers, loginUser, searchQuery]);
 
   const handleUserSelect = (receiverData) => {
     navigate(`/transfer/${receiverData.id}`, {
