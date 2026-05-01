@@ -62,10 +62,14 @@ const Button = ({
         }
         {...props}
       >
-        <div className="flex gap-2.5 items-center justify-center">
+        <div className="flex gap-3.5 items-center justify-center">
           {isLoading && <Spinner size={18} className="text-current" />}
           {isHaveIcon && Icon && <Icon className={iconClassName} />}
-          {children && <span>{children}</span>}
+          {children && (
+            <span className="flex gap-3 items-center justify-center">
+              {children}
+            </span>
+          )}
         </div>
       </button>
     </>
