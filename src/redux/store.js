@@ -20,7 +20,13 @@ const persistConfig = {
   key: "ew-DB",
   storage,
   whitelist: ["loginReducer", "registerReducer", "transactionReducer"],
-  blacklist: ["activeTooltip", "mousePosition", "zIndex"],
+  blacklist: [
+    "activeTooltip",
+    "mousePosition",
+    "zIndex",
+    "chartData",
+    "chartLayout",
+  ],
 };
 
 const persistedReducer = persistCombineReducers(persistConfig, {
