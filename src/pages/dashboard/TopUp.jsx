@@ -10,7 +10,6 @@ import Avatar from "../../components/atoms/Avatar";
 import InputRadio from "../../components/atoms/InputRadio";
 import { transactionActions } from "../../redux/slice/transactionSlice";
 import { loginActions } from "../../redux/slice/loginSlice";
-import { registerActions } from "../../redux/slice/registerSlice";
 
 const TopUp = () => {
   const dispatch = useDispatch();
