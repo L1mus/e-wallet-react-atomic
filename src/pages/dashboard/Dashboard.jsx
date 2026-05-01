@@ -44,7 +44,11 @@ const Dashboard = () => {
     )
     .reduce((sum, tx) => sum + tx.amount, 0);
 
-  const recentTransactions = transactions.slice(0, 5);
+  const recentTransactions = transactions
+    .filter(
+      (tx) => tx.senderId === loginUser?.id || tx.receiverId === loginUser?.id,
+    )
+    .slice(0, 5);
 
   const formatBalance = (amount) =>
     typeof amount === "number" ? amount.toLocaleString("id-ID") : "0";
@@ -127,7 +131,10 @@ const Dashboard = () => {
             <h3 className="font-bold text-black text-sm">
               Transaction History
             </h3>
-            <button className="text-primary text-xs xl:text-sm font-medium hover:underline cursor-pointer whitespace-nowrap">
+            <button
+              className="text-primary text-xs xl:text-sm font-medium hover:underline cursor-pointer whitespace-nowrap"
+              onClick={() => navigate("/history")}
+            >
               See All
             </button>
           </div>
