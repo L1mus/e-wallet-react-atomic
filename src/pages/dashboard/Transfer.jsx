@@ -8,7 +8,7 @@ import Avatar from "../../components/atoms/Avatar";
 import Stepper from "../../components/molecules/Stepper";
 import Send from "../../assets/icons/Send.svg?react";
 import Input from "../../components/atoms/Input";
-import { mockUsers } from "../../data/mockUsers";
+import { mockDatabase } from "../../data/mockDatabase";
 
 const Transfer = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -20,7 +20,7 @@ const Transfer = () => {
 
   const allUsers = useMemo(() => {
     const userMap = new Map();
-    mockUsers.forEach((u) => userMap.set(u.email, u));
+    mockDatabase.users.forEach((u) => userMap.set(u.email, u));
     registerUser.forEach((u) => userMap.set(u.email, u));
     return Array.from(userMap.values());
   }, [registerUser]);
