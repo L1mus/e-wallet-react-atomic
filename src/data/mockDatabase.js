@@ -1,10 +1,10 @@
 import { saveData, getData } from "../utils/storage";
 
-const mockDatabase = {
+export const mockDatabase = {
   users: [
     {
       id: "1",
-      name: "Ghaluh Wizard",
+      username: "Ghaluh Wizard",
       email: "ghaluhwizz@gmail.com",
       phone: "6282116304337",
       password: "password123",
@@ -16,7 +16,7 @@ const mockDatabase = {
     },
     {
       id: "2",
-      name: "Robert Fox",
+      username: "Robert Fox",
       email: "robert.fox@example.com",
       phone: "2395550108",
       password: "password123",
@@ -27,7 +27,7 @@ const mockDatabase = {
     },
     {
       id: "3",
-      name: "Ali Mustadji",
+      username: "Ali Mustadji",
       email: "limustadji@example.com",
       phone: "6285156534946",
       password: "password123",
