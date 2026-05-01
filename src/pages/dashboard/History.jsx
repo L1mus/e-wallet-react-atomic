@@ -40,8 +40,7 @@ const History = () => {
         phone: tx.receiverPhoneSnapshot || "-",
         amount: `Rp ${tx.amount.toLocaleString("id-ID")}`,
         type: isExpense ? "expense" : "income",
-        avatar:
-          tx.profilePicture || `https://i.pravatar.cc/150?u=${tx.receiverId}`,
+        profilePicture: tx.profilePicture,
         transactionType: tx.transactionType,
         timestamp: tx.timestamp,
       };
@@ -89,8 +88,6 @@ const History = () => {
 
     setModalState({ isOpen: false, id: null });
   };
-
-  console.log(currentItems);
 
   return (
     <div className="w-full pb-10">
