@@ -51,6 +51,8 @@ const Profile = () => {
     }
   };
 
+  console.log(loginUser);
+
   return (
     <div className="w-full pb-10">
       <div className="flex items-center gap-2 mb-6 text-primary px-4 md:px-0">
@@ -61,35 +63,31 @@ const Profile = () => {
       <div className="w-full bg-white md:border md:border-gray-200 md:rounded-xl md:shadow-sm p-4 md:p-8">
         <div className="mb-8">
           <h3 className="font-semibold text-black text-base mb-4">
-            Profile Picture
+            Account Information
           </h3>
 
           <div
             key={loginUser?.username + loginUser?.phone}
             className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6"
           >
-            <div className="bg-gray-50 rounded-xl p-4 w-32 h-32 flex items-center justify-center shrink-0 border border-gray-100">
+            <div className="bg-gray-50 rounded-xl p-3 w-24 h-24 flex items-center justify-center shrink-0 border border-gray-100">
               <Avatar
                 imageSrc={loginUser?.profilePicture}
-                className="w-24 h-24 mb-4 border-2 border-primary-light"
+                className="w-full h-full border-2 border-primary-light"
               />
-              <h2 className="text-xl font-bold text-black">
-                {loginUser?.username}
-              </h2>
-              <p className="text-grey text-sm">{loginUser?.email}</p>
             </div>
 
-            <div className="flex flex-col gap-3 w-full md:w-auto">
-              <Button className="flex items-center justify-center gap-2 py-2.5  text-sm">
-                <Pencil size={16} />
+            <div className="flex flex-col gap-3 w-full">
+              <Button className="text-sm">
+                <Pencil size={24} />
                 Change Profile
               </Button>
 
               <Button
                 variant="outline"
-                className="flex items-center justify-center gap-2 py-2.5 px-6 border border-danger text-danger hover:bg-danger/10 text-sm"
+                className="py-2.5 border border-danger text-danger hover:bg-danger/10 text-sm"
               >
-                <Trash2 size={16} />
+                <Trash2 size={24} />
                 Delete Profile
               </Button>
             </div>
